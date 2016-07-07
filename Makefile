@@ -21,6 +21,9 @@ pfcofs: pfcofs.c
 full64: full64.c
 	${CC} ${CFLAGS} -o $@ $^
 
+thouptf: thouptf.c
+	${CC} ${CFLAGS} -o $@ $^
+
 .PHONY: clean
 
 clean:
