@@ -16,6 +16,8 @@ int main(int argc, char *argv[])
 
    printf("Substring is:\n");
    printf("%*.*s\n", 10,l, argv[1]+si);
+   printf("And this is the way to print only a certain number of characters from teh start of the string:\n");
+   printf("%.*s\n", l, argv[1]);
 
    return 0;
 }
