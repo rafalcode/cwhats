@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-g -Wall
 SPECLIBS=
-EXECUTABLES=grounda opts1 opts2 full64 pfcofs
+EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b
 
 gorounda: gorounda.c
 	${CC} ${CFLAGS} -o $@ $^
@@ -22,6 +22,10 @@ full64: full64.c
 	${CC} ${CFLAGS} -o $@ $^
 
 thouptf: thouptf.c
+	${CC} ${CFLAGS} -o $@ $^
+
+# looking at thiryt two bits and how they may be got doen to 16 bits nicely.
+three2b: three2b.c
 	${CC} ${CFLAGS} -o $@ $^
 
 .PHONY: clean
