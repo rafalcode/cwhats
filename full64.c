@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
    printf("%lx\n", (1UL<<61)-1UL);
    printf("%lx\n", (1UL<<60)-1UL);
    printf("%lx\n", (1UL<<59)-1UL);
+   printf("%lx\n", (1UL<<4)-1UL);
 
    return 0;
 }
