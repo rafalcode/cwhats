@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-g -Wall
 SPECLIBS=
-EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0
+EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco.c
 
 gorounda: gorounda.c
 	${CC} ${CFLAGS} -o $@ $^
@@ -29,6 +29,9 @@ three2b: three2b.c
 	${CC} ${CFLAGS} -o $@ $^
 
 mn0: mn0.c
+	${CC} ${CFLAGS} -o $@ $^
+
+pwco: pwco.c
 	${CC} ${CFLAGS} -o $@ $^
 
 .PHONY: clean
