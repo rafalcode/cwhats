@@ -1,4 +1,6 @@
-/* make a pairwise comparison table .. simplest possible */
+/* make a pairwise comparison table .. list out a table
+ * where the index of the row represents the first ot the pair, and each member of the row represents
+ * the indices of the original sequence that they are compared with */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -18,7 +20,7 @@ int main(int argc, char *argv[])
     for(i=0;i<n;++i) 
         na[i]=i;
 
-    int npwc=n*(n-1)/2;
+    int npwc=n*(n-1)/2; // wll known, from the maths.
     int *pwa=calloc(npwc, sizeof(int));
     int nr=n-1; // numbner of rows oour pairwise comp table will have
     int nc=n-1;
