@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 
     int *nbf=malloc((n/4)*sizeof(int));
     // int *nbf=malloc(n*sizeof(int));
-    int i, ii, j, jj, k;
+    int i, ii, k;
 
     /*
     if(FIRINT) {
@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     else
         firstbyte=6;
 
-    ii=0;
+    ii=0; // free floating iterator
     for(i=firstbyte;i<n;i+=2) {
         k=(i-firstbyte)%8;
         if(!k) {
