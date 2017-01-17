@@ -31,6 +31,8 @@ three2b: three2b.c
 mn0: mn0.c
 	${CC} ${CFLAGS} -o $@ $^
 
+
+# pairwise comparison able, simplest possible idea ... turne out to be a bit thorny.
 pwco: pwco.c
 	${CC} ${CFLAGS} -o $@ $^
 

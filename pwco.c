@@ -1,5 +1,5 @@
 /* make a pairwise comparison table .. list out a table
- * where the index of the row represents the first ot the pair, and each member of the row represents
+ * where the index of the row represents the first of the pair, and each member of the row represents
  * the indices of the original sequence that they are compared with */
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,7 +7,6 @@
 
 int main(int argc, char *argv[])
 {
-    /* argument accounting: remember argc, the number of arguments, _includes_ the executable */
     if(argc!=2) {
         printf("Error. Pls supply argument (integer).\n");
         exit(EXIT_FAILURE);
@@ -50,6 +49,23 @@ int main(int argc, char *argv[])
         printf("\n"); 
     }
 
+    /* try printing out a full table */
+    mi=0;
+    int mir=npwc-1-mi;
+    printf("mi=%d/mir=%d\n", mi, mir); 
+    for(i=0;i<nr;++i) {
+        mj=nc-i;
+        printf("%d) ", i); 
+        for(k=0;k<i;++k) 
+            printf("%03d ", pwa[mir+mj-k-1]);
+        for(j=0;j<mj;++j) {
+            printf("%03d ", pwa[mi+j]);
+        }
+        mi+=n-i-1; //multiplier for i
+        mir=npwc-mi-1; // reverse mj
+        printf("\n"); 
+        printf("mi=%d/mir=%d\n", mi, mir); 
+    }
     free(na);
     free(pwa);
     return 0;
