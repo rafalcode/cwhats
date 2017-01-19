@@ -27,13 +27,13 @@ int main(int argc, char *argv[])
     printf("Total PWCT size: %i / Num rows: %i / Num cols: %d\n", npwc, nr, nc);
     mi=0;
     for(i=0;i<nr;++i) {
-        mj=nc-i;
+        mj=nc-i; // gradually decreasing extent of the column run
         for(j=0;j<mj;++j) {
             pwa[mi+j]=na[i+j+1];
             printf("%d/%d ", mi+j, i+j+1);
         }
         printf("\n"); 
-        mi+=n-i-1; //multiplier for i
+        mi+=n-i-1; // cumulative start position for the column run.
     }
 
     mi=0;
