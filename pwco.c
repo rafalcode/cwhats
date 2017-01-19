@@ -35,19 +35,40 @@ int main(int argc, char *argv[])
         mi+=n-i-1; //multiplier for i
     }
 
-    mi=0;
+    mi=0; // cumulative starting indec for each i
     char *spapad="    ";
     for(i=0;i<nr;++i) {
-        mj=nc-i;
         printf("%d) ", i); 
         for(k=0;k<i;++k) 
             printf("%s", spapad); 
+        mj=nc-i; // current extent of the j variable
         for(j=0;j<mj;++j) {
             printf("%03d ", pwa[mi+j]);
         }
-        mi+=n-i-1; //multiplier for i
+        mi+=n-i-1; 
         printf("\n"); 
     }
+
+    mi=0;
+    printf("Reverse:\n"); 
+    for(i=0;i<nr;++i) {
+        printf("%d) ", i); 
+        mj=nc-i; // current extent of the j variable
+        for(j=0;j<=i;++j) {
+            printf("%03d ", pwa[mi+j]);
+        }
+        mi+=n-i-1; 
+        printf("\n"); 
+    }
+
+    k=0;
+    for(i=0;i<3;++i) {
+        for(j=0;j<=i;++j) {
+            printf("%d ", k++);
+        }
+        printf("| ");
+    }
+    printf("\n"); 
 
     /* try printing out a full table */
     mi=0;
