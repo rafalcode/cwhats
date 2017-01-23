@@ -36,7 +36,24 @@ int main(int argc, char *argv[])
         mi+=n-i-1; // cumulative start position for the column run.
     }
 
-	printf("totherway:\n"); 
+    /*render a normal matrix */
+    int *m=calloc(n*n,sizeof(int));
+    for(i=1;i<n;++i) {
+        mj=nc-i; // gradually decreasing extent of the column run
+        for(j=0;j<mj;++j) {
+            m[mi+j]=na[i+j+1];
+        }
+        mi+=n-i-1; // cumulative start position for the column run.
+    }
+    printf("Matrix rendition:\n"); 
+    for(i=0;i<n;++i) {
+        for(j=0;j<n;++j)
+            printf("%d ", m[n*i+j]);
+        printf("\n"); 
+    }
+
+
+    printf("totherway:\n"); 
     mi=0;
     for(i=0;i<nr;++i) {
         mj=i+1; // gradually decreasing extent of the column run
@@ -101,5 +118,6 @@ int main(int argc, char *argv[])
     }
     free(na);
     free(pwa);
+    free(m);
     return 0;
 }
