@@ -25,6 +25,7 @@ int main(int argc, char *argv[])
     int nc=n-1;
     printf("Total PWCT size: %i / Num rows: %i / Num cols: %d\n", npwc, nr, nc);
     mi=0;
+	printf("Straight:\n"); 
     for(i=0;i<nr;++i) {
         mj=nc-i; // gradually decreasing extent of the column run
         for(j=0;j<mj;++j) {
@@ -35,10 +36,21 @@ int main(int argc, char *argv[])
         mi+=n-i-1; // cumulative start position for the column run.
     }
 
+	printf("totherway:\n"); 
+    mi=0;
+    for(i=0;i<nr;++i) {
+        mj=i+1; // gradually decreasing extent of the column run
+        for(j=0;j<mj;++j) {
+            // pwa[mi+j]=na[i+j+1];
+            printf("%d/%d ", mi+j, i+j+1);
+        }
+        printf("\n"); 
+        mi+=i+1; // cumulative start position for the column run.
+    }
     mi=0; // cumulative starting indec for each i
     char *spapad="    ";
     for(i=0;i<nr;++i) {
-        printf("%d) ", i); 
+        printf("%03d ", i); 
         for(k=0;k<i;++k) 
             printf("%s", spapad); 
         mj=nc-i; // current extent of the j variable
