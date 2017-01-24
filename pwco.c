@@ -26,22 +26,26 @@ int main(int argc, char *argv[])
     printf("Total PWCT size: %i / Num rows: %i / Num cols: %d\n", npwc, nr, nc);
     mi=0;
 	printf("Straight:\n"); 
+    k=0;
     for(i=0;i<nr;++i) {
+        k++;
         mj=nc-i; // gradually decreasing extent of the column run
         for(j=0;j<mj;++j) {
             pwa[mi+j]=na[i+j+1];
-            printf("%d/%d ", mi+j, i+j+1);
+            printf("%d/%d/%d ", i+k+mi+j, mi+j, i+j+1);
         }
         printf("\n"); 
         mi+=n-i-1; // cumulative start position for the column run.
     }
 
     /*render a normal matrix */
+    printf("render a normal matrix:\n");
     int *m=calloc(n*n,sizeof(int));
-    for(i=1;i<n;++i) {
-        mj=nc-i; // gradually decreasing extent of the column run
-        for(j=0;j<mj;++j) {
-            m[mi+j]=na[i+j+1];
+    k=0; // free-floating
+    for(i=n-nr;i<n;++i) {
+        mj=n-i+1; // gradually decreasing extent of the column run
+        for(j=n-nc;j<mj;++j) {
+            m[mi+j-1]=na[i+j-1];
         }
         mi+=n-i-1; // cumulative start position for the column run.
     }
@@ -52,7 +56,7 @@ int main(int argc, char *argv[])
         printf("\n"); 
     }
 
-
+/*
     printf("totherway:\n"); 
     mi=0;
     for(i=0;i<nr;++i) {
@@ -99,7 +103,7 @@ int main(int argc, char *argv[])
     }
     printf("\n"); 
 
-    /* try printing out a full table */
+    // try printing out a full table
     mi=0;
     int mir=npwc-1-mi;
     printf("mi=%d/mir=%d\n", mi, mir); 
@@ -116,6 +120,7 @@ int main(int argc, char *argv[])
         printf("\n"); 
         printf("mi=%d/mir=%d\n", mi, mir); 
     }
+*/
     free(na);
     free(pwa);
     free(m);
