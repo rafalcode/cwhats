@@ -48,15 +48,19 @@ int main(int argc, char *argv[])
     int nr=n-1; // number of rows our pairwise comp table will have
     int nc=n-1;
     printf("Total PWCT size: %i / Num rows: %i / Num cols: %d\n", npwc, nr, nc);
+    /*
     mi=0;
     for(i=0;i<nr;++i) {
         mj=nc-i; // gradually decreasing extent of the column run
-        for(j=0;j<mj;++j)
+        for(j=0;j<mj;++j) {
             pwa[mi+j]=na[i+j+1];
+            printf("%d/%d ", mi+j, i+j+1);
+        }
+        printf("\n"); 
         mi+=n-i-1; // cumulative start position for the column run.
     }
-
-    /* now render a square matrix out of the pwa */
+    */
+    /* now render a square matrix out of the pwa: nope just uses the members matrix. */
     mi=0;
     int *ma=calloc(n*n,sizeof(int));
     int m;
@@ -69,8 +73,23 @@ int main(int argc, char *argv[])
         mi+=n; // cumulative start position for the column run.
     }
 
+    /* now render a square matrix out of the pwa: nope just uses the members matrix.
+    int *ma=calloc(n*n,sizeof(int));
+    int m;
+    mi=0;
+    for(i=0;i<nr;++i) {
+        mj=nc-i; // gradually decreasing extent of the column run
+        m=(nr+1)*i;
+        for(j=0;j<mj;++j) {
+            ma[mi+j]=na[i+j+1];
+            printf("%d/%d ", mi+j, i+j+1);
+        }
+        printf("\n"); 
+        mi+=n; // cumulative start position for the column run.
+    }
     /* only one half is done however */
-    mirb(ma, n, 1); //copy upright to down left
+    // mirb(ma, n, 1); //copy upright to down left
+    // */
 
     printf("Matrix rendition:\n"); 
     for(i=0;i<n;++i) {
