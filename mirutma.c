@@ -46,6 +46,7 @@ int main(int argc, char *argv[])
         for(j=0;j<n;++j) 
             m[n*i+j]=n*i+j+1;
 
+    printf("Here is original matrix:\n"); 
     for(i=0;i<n;++i) {
         for(j=0;j<n;++j) 
             printf("%02d ", m[n*i+j]);
@@ -55,6 +56,7 @@ int main(int argc, char *argv[])
     /* print stuff out */
     mirr(m, n);
 
+    printf("Here is the transformed matrix:\n"); 
     for(i=0;i<n;++i) {
         for(j=0;j<n;++j) 
             printf("%02d ", m[n*i+j]);

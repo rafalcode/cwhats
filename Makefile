@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-g -Wall
 SPECLIBS=
-EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma
+EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0
 
 gorounda: gorounda.c
 	${CC} ${CFLAGS} -o $@ $^
@@ -34,6 +34,10 @@ mn0: mn0.c
 
 # pairwise comparison able, simplest possible idea ... turne out to be a bit thorny.
 pwco: pwco.c
+	${CC} ${CFLAGS} -o $@ $^
+
+# pairwise comparison able, simplest possible idea ... turne out to be a bit thorny.
+passing0: passing0.c
 	${CC} ${CFLAGS} -o $@ $^
 
 # Given an upper triangular matrix, mirror the values onto the lower triangle
