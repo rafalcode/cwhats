@@ -11,6 +11,9 @@ which show very simple but often, powerful effects
 The name is a mnemonic for "Go around array" and it's used for comparing the
 each element of an array with the rest, one by one, in circular fashion.
 
+## pwco.c
+Coded much later, but seems to be similar to the above. PairWise Comparison Operations
+
 ## mirutma.c
 Mnemonic MIR Upper Triangular MAtrix
 matrix transformation: principally mirroring triangle matrices.

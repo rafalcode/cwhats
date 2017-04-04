@@ -48,18 +48,19 @@ int main(int argc, char *argv[])
     int nr=n-1; // number of rows our pairwise comp table will have
     int nc=n-1;
     printf("Total PWCT size: %i / Num rows: %i / Num cols: %d\n", npwc, nr, nc);
-    /*
+
+    printf("PWA a pairwise op array of size %d. Holds results of all pairwise ops like so:\n", npwc); 
     mi=0;
     for(i=0;i<nr;++i) {
         mj=nc-i; // gradually decreasing extent of the column run
         for(j=0;j<mj;++j) {
             pwa[mi+j]=na[i+j+1];
-            printf("%d/%d ", mi+j, i+j+1);
+            printf("p%d/%d.vs.%d ", mi+j, i, i+j+1);
         }
         printf("\n"); 
         mi+=n-i-1; // cumulative start position for the column run.
     }
-    */
+
     /* now render a square matrix out of the pwa: nope just uses the members matrix. */
     mi=0;
     int *ma=calloc(n*n,sizeof(int));
@@ -67,11 +68,14 @@ int main(int argc, char *argv[])
     for(i=0;i<nr;++i) {
         mj=nc-i; // gradually decreasing extent of the column run
         m=(nr+1)*i;
-        for(j=0;j<mj;++j)
+        for(j=0;j<mj;++j) {
+            printf("%i:%i ", m+i+j+1, i+j+1);
             ma[m+i+j+1]=na[i+j+1];
+        }
         /// mi+=n-i-1; // cumulative start position for the column run.
         mi+=n; // cumulative start position for the column run.
     }
+    printf("\n");
 
     /* now render a square matrix out of the pwa: nope just uses the members matrix.
     int *ma=calloc(n*n,sizeof(int));
