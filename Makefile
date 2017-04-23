@@ -34,7 +34,7 @@ mn0: mn0.c
 
 # pairwise comparison able, simplest possible idea ... turne out to be a bit thorny.
 pwco: pwco.c
-	${CC} ${CFLAGS} -o $@ $^
+	${CC} ${CFLAGS} -o $@ $^ -lm
 
 # pairwise comparison able, simplest possible idea ... turne out to be a bit thorny.
 passing0: passing0.c

@@ -4,16 +4,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 #define OFFSET 1
 
 typedef unsigned char boole;
+typedef struct
+{
+	float x,y;
+} cartpos;  /* a cartesian position, to lend reality. */
 
-void mirb(int *m, int n, boole cpdown) // forward slash notation: mirror upper right triangular onto low left triangular.
+void mirb(float *m, int n, boole cpdown) // forward slash notation: mirror upper right triangular onto low left triangular.
 {
     int i, j, piv;
-    for(i=0;i<n;++i)  // reset diagonal to zero first : creates a forward slash
-        m[n*i+i]=0;
+    // for(i=0;i<n;++i)  // reset diagonal to zero first : creates a forward slash
+        // m[n*i+i]=0;
 
     for(i=1;i<n;++i) {
         piv=OFFSET+i;
@@ -33,18 +38,23 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    int i, j, mi, mj, k;
+    int i, j, mi, mj;
     int n=atoi(argv[1]);
 
     /* OK, here we have our collection of elements that we wish to pair up in all possible combos */
-    int *na=calloc(n, sizeof(int));
-    for(i=0;i<n;++i) 
-        na[i]=i;
+    cartpos *na=calloc(n, sizeof(cartpos));
+	printf("We printout the points, these are random points inside a unit square\n"); 
+    for(i=0;i<n;++i) {
+        na[i].x=(float)rand()/RAND_MAX;
+        na[i].y=(float)rand()/RAND_MAX;
+		printf("Pt.%i=(%2.4f,%2.4f) ", i+1, na[i].x, na[i].y);
+	}
+	printf("\n");
 
     int npwc=n*(n-1)/2; // well known, from the maths.
 
     /* We're going to create a holder for the 1to1 relationships.*/
-    int *pwa=calloc(npwc, sizeof(int));
+    float *pwa=calloc(npwc, sizeof(float));
     int nr=n-1; // number of rows our pairwise comp table will have
     int nc=n-1;
     printf("Total PWCT size: %i / Num rows: %i / Num cols: %d\n", npwc, nr, nc);
@@ -54,8 +64,8 @@ int main(int argc, char *argv[])
     for(i=0;i<nr;++i) {
         mj=nc-i; // gradually decreasing extent of the column run
         for(j=0;j<mj;++j) {
-            pwa[mi+j]=na[i+j+1];
-            printf("p%d/%d.vs.%d ", mi+j, i, i+j+1);
+            pwa[mi+j]=sqrt(pow((na[i].x-na[i+j+1].x), 2)+pow((na[i].y-na[i+j+1].y), 2));
+            printf("p%d/%d.vs.%d=%2.4f ", mi+j, i, i+j+1, pwa[mi+j]);
         }
         printf("\n"); 
         mi+=n-i-1; // cumulative start position for the column run.
@@ -63,19 +73,21 @@ int main(int argc, char *argv[])
 
     /* now render a square matrix out of the pwa: nope just uses the members matrix. */
     mi=0;
-    int *ma=calloc(n*n,sizeof(int));
+    float *ma=calloc(n*n,sizeof(float));
     int m;
     for(i=0;i<nr;++i) {
         mj=nc-i; // gradually decreasing extent of the column run
         m=(nr+1)*i;
         for(j=0;j<mj;++j) {
             printf("%i:%i ", m+i+j+1, i+j+1);
-            ma[m+i+j+1]=na[i+j+1];
+            // ma[m+i+j+1]=na[i+j+1]; // if direct from na
+            ma[m+i+j+1]=pwa[mi+j];
         }
-        /// mi+=n-i-1; // cumulative start position for the column run.
-        mi+=n; // cumulative start position for the column run.
+        mi+=n-i-1; // cumulative start position for the column run.
+        // mi+=n; // Some sort of alternative
     }
     printf("\n");
+    mirb(ma, n, 1); //copy upright to down left
 
     /* now render a square matrix out of the pwa: nope just uses the members matrix.
     int *ma=calloc(n*n,sizeof(int));
@@ -91,16 +103,15 @@ int main(int argc, char *argv[])
         printf("\n"); 
         mi+=n; // cumulative start position for the column run.
     }
-    /* only one half is done however */
-    // mirb(ma, n, 1); //copy upright to down left
     // */
 
     printf("Matrix rendition:\n"); 
     for(i=0;i<n;++i) {
         for(j=0;j<n;++j)
-            printf("%d ", ma[n*i+j]);
+            printf("%2.4f ", ma[n*i+j]);
         printf("\n"); 
     }
+	
 
 /*
     printf("totherway:\n"); 
