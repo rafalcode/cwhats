@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-g -Wall
 SPECLIBS=
-EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0
+EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis
 
 gorounda: gorounda.c
 	${CC} ${CFLAGS} -o $@ $^
@@ -44,6 +44,9 @@ passing0: passing0.c
 # not as easy as it seems. Got into knots. WOrking now though.
 mirutma: mirutma.c
 	${CC} ${CFLAGS} -o $@ $^
+
+cis: cis.c
+	${CC} ${CFLAGS} -o $@ $^ -lm
 
 .PHONY: clean
 
