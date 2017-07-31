@@ -1,7 +1,8 @@
 CC=gcc
 CFLAGS=-g -Wall
 SPECLIBS=
-EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis
+BZLIBS=-lbz2
+EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0
 
 gorounda: gorounda.c
 	${CC} ${CFLAGS} -o $@ $^
@@ -45,8 +46,13 @@ passing0: passing0.c
 mirutma: mirutma.c
 	${CC} ${CFLAGS} -o $@ $^
 
+# cosine and sine values.
 cis: cis.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
+
+bz0: bz0.c
+	${CC} ${CFLAGS} -o $@ $^ $(BZLIBS)
+
 
 .PHONY: clean
 
