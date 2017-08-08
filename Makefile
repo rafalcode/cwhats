@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-g -Wall
 SPECLIBS=
 BZLIBS=-lbz2
-EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt
+EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt hxv2
 
 isqrt: isqrt.c
 	${CC} ${CFLAGS} -o $@ $^
@@ -55,6 +55,10 @@ cis: cis.c
 
 bz0: bz0.c
 	${CC} ${CFLAGS} -o $@ $^ $(BZLIBS)
+
+# dec to hex values 
+hxv2: hxv2.c
+	${CC} ${CFLAGS} -o $@ $^
 
 
 .PHONY: clean
