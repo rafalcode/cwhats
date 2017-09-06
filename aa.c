@@ -58,6 +58,37 @@ int catchopts(optstruct *opts, int argc, char **argv)
 	return 0;
 }
 
+void occheck(char *aa, oc_t *ocs2, int *gbp, int mxq)
+{
+	int i, j, ocsz=0;
+	int gb=*gbp;
+	gb=GBUF;
+	unsigned char seenc;
+	for(i=0; aa[i]!='\0'; i++) {
+		seenc=0;
+		for(j=0;j<ocsz;++j) {
+			if(aa[i]== ocs2[j].l) {
+				seenc=1;
+				ocs2[j].q++;
+				if(ocs2[j].q==mxq)
+					printf("Max quan found at %i with \n", i, ocs2[j].l); 
+				break;
+			}
+		}
+		if(seenc==0) {
+			if(ocsz==gb-1) {
+				gb+=GBUF;
+				ocs2=realloc(ocs2, gb*sizeof(oc_t));
+				for(j=gb-GBUF; j<gb; j++)
+					ocs2[j].q=0;
+			}
+			ocs2[ocsz].l=aa[i];
+			ocs2[ocsz].q++;
+			ocsz++;
+		}
+	}
+	return;
+}
 
 
 int main(int argc, char *argv[])
@@ -67,9 +98,8 @@ int main(int argc, char *argv[])
 		exit(EXIT_SUCCESS);
 	}
 	int oc[26]={0};
-	// char *aa="ASQLDRFRVFLGWDNGMMLVYQGNKTYEPWLNCDMASPTLSLVSKKAPKILKAADINTTLQPCLAFFIELLLKGIDNERIPNSGSGGREMGLLAPTYSSEATLVTRENNMMEGVHGFENMQDVEVIKLKLPEGYSDVCHFMFMLAGILYIVYDLQMHMSSERETGKFPNPLSDEEFDNPKVVVTNSFVLLEFTVTGAGARPSEQGQEPHNLGATKGSLAISSKTPEIHKDTNPASAQFEGKHTESDAKGVSNEDVFITKERDGREVEPTIKLSKKSVLNPMNVVYNPMLQISEGALRKHSMNDEITILNNTLINKERSVDLGAVSFVNDLLIDKLGCVSGKLAVQLNQSAPPEILHGKDPLTLFLGNTIALMLSKMQRIRVWEEYIFLNLHLALAWEPLLGNLKTHDSQKKWALCGFLIISRIRNLFESEGPVHGLRFSAMPCNTDTRQIKALERFPYAPEKPQWHGDELESPCRLVVASKLLASHDGVSIGKTIGSWPLPAQRYNAYVAWAANDSSILSARPGFAVKEDRLGHSLAQESGTIVVRNPQYGVRFINYNKDEHREFKREATFYPKTVVTHLGAIEGTLMFEIGDAAFTMLHLEEATDAEVRELYYMDMLDKKSSLGRACERIRRVLAPGDHKANGLESAIVSGQNGYEGRIRGLQTFQSNPLKKGRTHMAFCTTLHPFGGLKLVSSQLLKKELAVGTYGHQRTVLHSAEYSCPTSIPNLEGLMYNLISAQGEVNSDAKCHYAALAYICLQVRSVSMNQTEASDLRNFLETPILANDALASEQLLGSKKAKS";
-	char *aa="ASQLDRFRVFLGWDNGMML";
-
+	char *aa="ASQLDRFRVFLGWDNGMMLVYQGNKTYEPWLNCDMASPTLSLVSKKAPKILKAADINTTLQPCLAFFIELLLKGIDNERIPNSGSGGREMGLLAPTYSSEATLVTRENNMMEGVHGFENMQDVEVIKLKLPEGYSDVCHFMFMLAGILYIVYDLQMHMSSERETGKFPNPLSDEEFDNPKVVVTNSFVLLEFTVTGAGARPSEQGQEPHNLGATKGSLAISSKTPEIHKDTNPASAQFEGKHTESDAKGVSNEDVFITKERDGREVEPTIKLSKKSVLNPMNVVYNPMLQISEGALRKHSMNDEITILNNTLINKERSVDLGAVSFVNDLLIDKLGCVSGKLAVQLNQSAPPEILHGKDPLTLFLGNTIALMLSKMQRIRVWEEYIFLNLHLALAWEPLLGNLKTHDSQKKWALCGFLIISRIRNLFESEGPVHGLRFSAMPCNTDTRQIKALERFPYAPEKPQWHGDELESPCRLVVASKLLASHDGVSIGKTIGSWPLPAQRYNAYVAWAANDSSILSARPGFAVKEDRLGHSLAQESGTIVVRNPQYGVRFINYNKDEHREFKREATFYPKTVVTHLGAIEGTLMFEIGDAAFTMLHLEEATDAEVRELYYMDMLDKKSSLGRACERIRRVLAPGDHKANGLESAIVSGQNGYEGRIRGLQTFQSNPLKKGRTHMAFCTTLHPFGGLKLVSSQLLKKELAVGTYGHQRTVLHSAEYSCPTSIPNLEGLMYNLISAQGEVNSDAKCHYAALAYICLQVRSVSMNQTEASDLRNFLETPILANDALASEQLLGSKKAKS";
+	// char *aa="ASQLA";
 
 	size_t aal=strlen(aa);
 	printf("aa length=%zu\n", aal); 
@@ -90,14 +120,15 @@ int main(int argc, char *argv[])
 	oc_t *ocs=calloc(gb, sizeof(oc_t));
 
 	unsigned char seenc;
-	for(;aa[i++]!='\0';) {
+	for(i=0; aa[i]!='\0'; i++) {
 		seenc=0;
-		for(j=0;j<ocsz;++j) 
-			if(aa[i-1]== ocs[j].l) {
+		for(j=0;j<ocsz;++j) {
+			if(aa[i]== ocs[j].l) {
 				seenc=1;
 				ocs[j].q++;
 				break;
 			}
+		}
 		if(seenc==0) {
 			if(ocsz==gb-1) {
 				gb+=GBUF;
@@ -105,7 +136,7 @@ int main(int argc, char *argv[])
 				for(j=gb-GBUF; j<gb; j++)
 					ocs[j].q=0;
 			}
-			ocs[ocsz].l=aa[i-1];
+			ocs[ocsz].l=aa[i];
 			ocs[ocsz].q++;
 			ocsz++;
 		}
@@ -120,9 +151,14 @@ int main(int argc, char *argv[])
 	printf("\n"); 
 	if(aal%ocsz!=0) {
 		printf("Error:length not dvisible by number of different aa's\n"); 
-		// exit(EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
-	printf("equal quan should be %zu\n", aal/ocsz); 
+	// printf("equal quan should be %zu\n", aal/ocsz); 
+	free(ocs);
+	oc_t *ocs2=calloc(GBUF, sizeof(oc_t));
+
+	occheck(aa, ocs2, &gb, aal/ocsz);
+
 	free(ocs);
 
 	return 0;
