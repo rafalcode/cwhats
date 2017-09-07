@@ -4,7 +4,7 @@
 #include <ctype.h>
 #include <unistd.h>
 
-#define ROWSZ 60
+#define ROWSZ 100
 #define GBUF 4
 #define n 4
 #define FLAG unsigned char /* some time also called a boolean */
@@ -185,7 +185,7 @@ char *occheckbe(char *aa, int aal, oc_t **ocs, int *gbp, int mxq, int *firstch, 
 		ia[j]=i;
 		j+=2;
 	}
-	FLAG firstchanegeven;
+	FLAG firstchangeeven, nolastch;
 	strcpy(aa2, aa);
 	int gb=*gbp;
 	oc_t *ocs2=*ocs;
@@ -208,9 +208,15 @@ char *occheckbe(char *aa, int aal, oc_t **ocs, int *gbp, int mxq, int *firstch, 
 					ocs2[k].q++;
 					if(*nchanges==0) {
 						*firstch=ia[i];
-						firstchangeeven=(i%2)?0:1;
+						firstchangeeven=(i%2)?0:1; // note how I work here with i, not ia[i] because i have in mind how to deal with evens and unevens
+						nolastch=1;
+					} else if( !firstchangeeven & nolastch & !(i%2)) {
+						*lastch=ia[i]; // last change in this case need much cleverer calculation it the next opposit change!
+						nolastch=0;
+					} else if( firstchangeeven & nolastch & (i%2)) {
+						*lastch=ia[i]; // last change in this case need much cleverer calculation it the next opposit change!
+						nolastch=0;
 					}
-					*lastch=ia[i];
 					(*nchanges)++;
 				} else
 					ocs2[j].q++;
