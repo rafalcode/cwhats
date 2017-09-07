@@ -168,6 +168,80 @@ void ocfirst(char *aa, oc_t **ocs, int *gbp, size_t aal, int *ocsz2)
 	return;
 }
 
+char *occheckbe(char *aa, int aal, oc_t **ocs, int *gbp, int mxq, int *firstch, int *lastch, int *nchanges) // check from both ends
+{
+	/* in this version we jump from one end of the string to the other in an attempt to corral in the substring from both sides */
+	int i, j, k, ocsz=0;
+	char *aa2=malloc((aal+1)*sizeof(char));
+	int *ia=malloc(aal*sizeof(int)); // index array
+	j=0;
+	int halfway=aal/2;
+	for(i=aal-1;i>=halfway;i--) {
+		ia[j]=i;
+		j+=2;
+	}
+	j=1;
+	for(i=0;i<halfway;i++) {
+		ia[j]=i;
+		j+=2;
+	}
+	FLAG firstchanegeven;
+	strcpy(aa2, aa);
+	int gb=*gbp;
+	oc_t *ocs2=*ocs;
+	unsigned char seenc;
+	*nchanges=0;
+	for(i=0; i<aal; i++) {
+		seenc=0;
+		for(j=0;j<ocsz;++j) {
+			if(aa2[ia[i]]== ocs2[j].l) {
+				seenc=1;
+				if(ocs2[j].q == mxq) {
+#ifdef DBG
+					printf("Max quan found at %i with %c\n", ia[i], ocs2[j].l); 
+#endif
+					k=minlet(ocs2, ocsz, mxq);
+#ifdef DBG
+					printf("minchar %c:%i\n", ocs2[k].l, ocs2[k].q);
+#endif
+					aa2[ia[i]]=ocs2[k].l;
+					ocs2[k].q++;
+					if(*nchanges==0) {
+						*firstch=ia[i];
+						firstchangeeven=(i%2)?0:1;
+					}
+					*lastch=ia[i];
+					(*nchanges)++;
+				} else
+					ocs2[j].q++;
+				break;
+			}
+		}
+		if(seenc==0) {
+			if(ocsz==gb-1) {
+				gb+=GBUF;
+				ocs2=realloc(ocs2, gb*sizeof(oc_t));
+				for(j=gb-GBUF; j<gb; j++)
+					ocs2[j].q=0;
+			}
+			ocs2[ocsz].l=aa2[ia[i]];
+			ocs2[ocsz].q++;
+			ocsz++;
+		}
+	}
+	ocs2=realloc(ocs2, ocsz*sizeof(oc_t));
+	for(i=0;i<ocsz;++i)
+		printf("%4c", ocs2[i].l);
+	printf("\n"); 
+	for(i=0;i<ocsz;++i)
+		printf("%4i", ocs2[i].q);
+	printf("\n"); 
+	*ocs=ocs2;
+	aa2[aal]='\0';
+	free(ia);
+	return aa2;
+}
+
 char *occheckrev(char *aa, int aal, oc_t **ocs, int *gbp, int mxq, int *firstch, int *lastch, int *nchanges)
 {
 	int i, j, k, ocsz=0;
@@ -321,7 +395,7 @@ int main(int argc, char *argv[])
 
 	oc_t *ocs3=calloc(gb, sizeof(oc_t));
 	gb=GBUF;
-	char *aa3=occheckrev(aa, aal, &ocs3, &gb, aal/ocsz, &firstch, &lastch, &nchanges);
+	char *aa3=occheckbe(aa, aal, &ocs3, &gb, aal/ocsz, &firstch, &lastch, &nchanges);
 
 	printaaoc(aa3, ocs3, ocsz);
 	printcmp2str(aa, aa3);
