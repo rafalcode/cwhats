@@ -15,11 +15,18 @@ typedef struct  /* optstruct, a container struct for the options */
 } optstruct;
 
 
-typedef struct
+typedef struct /*oc_t */
 {
 	char l; // letter
 	int q; //quantity
 } oc_t;
+
+typedef struct /*oc_t */
+{
+	int *els; // elemtns of the array
+	int sz; //sze
+	int gb; // buf
+} a_t;
 
 void usage(char *pname)
 {
@@ -78,10 +85,35 @@ int minlet(oc_t *ocs, int ocsz, int maxq)
 	return mnidx;
 }
 
+a_t *catchl(char *aa, int aal)
+{
+	int i, j;
+	a_t *arr=NULL;
+	arr->gb=GBUF;
+	arr->sz=0;
+	arr->els=malloc(arr->gb*sizeof(int));
+	j=0;
+	for(i=0;i<aal;++i)
+		if(aa[i]=='L') {
+			if(arr->sz == arr->gb-1) {
+				arr->gb+=GBUF;
+				arr->els=realloc(arr->els, arr->gb*sizeof(char));
+			}
+			arr->els[arr->sz]=i;
+			arr->sz++;
+		}
+	arr->els=realloc(arr->els, arr->sz*sizeof(char));
+
+	for(i=0;i<arr->sz;++i) 
+		printf("%i ", arr->els[i]);
+	printf("\n"); 
+
+	return arr;
+}
+
 void printaaoc(char *aa, oc_t *ocs2, int ocsz)
 {
 	int i;
-	printf("%s\n", aa);
 	printf("%i aa's were seen\n", ocsz); 
 	for(i=0;i<ocsz;++i)
 		printf("%4c", ocs2[i].l);
@@ -410,6 +442,9 @@ int main(int argc, char *argv[])
 	printf("Summary: Num changes to input string=%i, first change at %i and last change at %i\n", nchanges, firstch, lastch); 
 	szsub=firstch-lastch+1; // measured this and saw that if you subtract indices or positions you need to add 1.
 	printf("Length of smallest substring for changes = %i, %2.2f times over the min num changes\n", szsub, (float)szsub/nchanges);
+
+	a_t *arrl=catchl(aa, aal);
+	free(arrl->els);
 
 	free(ocs2);
 	free(aa2);
