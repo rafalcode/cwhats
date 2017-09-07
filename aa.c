@@ -396,7 +396,7 @@ int main(int argc, char *argv[])
 	printcmp2str(aa, aa2);
 
 	printf("Summary: Num changes to input string=%i, first change at %i and last change at %i\n", nchanges, firstch, lastch); 
-	int szsub=lastch-firstch;
+	int szsub=lastch-firstch+1;
 	printf("Length of smallest substring for changes = %i, %2.2f times over the min num changes\n", szsub, (float)szsub/nchanges);
 
 	oc_t *ocs3=calloc(gb, sizeof(oc_t));
