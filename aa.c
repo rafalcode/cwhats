@@ -401,7 +401,8 @@ int main(int argc, char *argv[])
 
 	oc_t *ocs3=calloc(gb, sizeof(oc_t));
 	gb=GBUF;
-	char *aa3=occheckbe(aa, aal, &ocs3, &gb, aal/ocsz, &firstch, &lastch, &nchanges);
+	// char *aa3=occheckbe(aa, aal, &ocs3, &gb, aal/ocsz, &firstch, &lastch, &nchanges); // seemed like a great idea .. but, no.
+	char *aa3=occheckrev(aa, aal, &ocs3, &gb, aal/ocsz, &firstch, &lastch, &nchanges);
 
 	printaaoc(aa3, ocs3, ocsz);
 	printcmp2str(aa, aa3);
