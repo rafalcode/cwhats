@@ -23,16 +23,15 @@ typedef struct /*oc_t */
 
 typedef struct /*oc_t */
 {
-	int *els; // elemtns of the array
+	int *els; // elements of the array
 	int sz; //sze
 	int gb; // buf
 } a_t;
 
 void usage(char *pname)
 {
-	printf("Program \"%s\" demonstrates going around an array in circular order\n", pname);
-	printf("while self-avoiding. This allows comparing each member of an array with every other\n");
-	printf("Usage: no arguments, produces this help text. Argument \"-g\" means \"go!\", as in carry out procedure.\n");
+	printf("Program \"%s\" to find smallest subsequence where amino-acid sequence has equal numbers of all AAs.\n");
+	return;
 }
 
 int catchopts(optstruct *opts, int argc, char **argv)
@@ -87,23 +86,25 @@ int minlet(oc_t *ocs, int ocsz, int maxq)
 
 a_t *catchl(char *aa, int aal)
 {
-	int i, j;
-	a_t *arr=NULL;
+	int i;
+	a_t *arr=malloc(sizeof(a_t));
 	arr->gb=GBUF;
 	arr->sz=0;
 	arr->els=malloc(arr->gb*sizeof(int));
-	j=0;
 	for(i=0;i<aal;++i)
 		if(aa[i]=='L') {
 			if(arr->sz == arr->gb-1) {
 				arr->gb+=GBUF;
-				arr->els=realloc(arr->els, arr->gb*sizeof(char));
+				arr->els=realloc(arr->els, arr->gb*sizeof(int));
 			}
 			arr->els[arr->sz]=i;
 			arr->sz++;
 		}
-	arr->els=realloc(arr->els, arr->sz*sizeof(char));
+	arr->els=realloc(arr->els, arr->sz*sizeof(int));
 
+	for(i=0;i<arr->sz;++i) 
+		printf("%i ", arr->els[i]);
+	printf("\n"); 
 	for(i=0;i<arr->sz;++i) 
 		printf("%i ", arr->els[i]);
 	printf("\n"); 
@@ -242,7 +243,7 @@ char *occheckbe(char *aa, int aal, oc_t **ocs, int *gbp, int mxq, int *firstch, 
 						*firstch=ia[i];
 						firstchangeeven=(i%2)?0:1; // note how I work here with i, not ia[i] because i have in mind how to deal with evens and unevens
 						nolastch=1;
-					} else if( !firstchangeeven & nolastch & !(i%2)) {
+					} else if( (!firstchangeeven) & nolastch & !(i%2)) {
 						*lastch=ia[i]; // last change in this case need much cleverer calculation it the next opposit change!
 						nolastch=0;
 					} else if( firstchangeeven & nolastch & (i%2)) {
@@ -406,7 +407,6 @@ int main(int argc, char *argv[])
 
 	size_t aal=strlen(aa);
 	printf("aa length=%zu\n", aal); 
-	int i=0;
 
 	int ocsz=0;
 
@@ -445,6 +445,7 @@ int main(int argc, char *argv[])
 
 	a_t *arrl=catchl(aa, aal);
 	free(arrl->els);
+	free(arrl);
 
 	free(ocs2);
 	free(aa2);
