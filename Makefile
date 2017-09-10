@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-g -Wall
 SPECLIBS=
 BZLIBS=-lbz2
-EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt hxv2 minlog10 aa
+EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt hxv2 minlog10 aa loopfun
 
 isqrt: isqrt.c
 	${CC} ${CFLAGS} -o $@ $^
@@ -35,6 +35,8 @@ three2b: three2b.c
 mn0: mn0.c
 	${CC} ${CFLAGS} -o $@ $^
 
+loopfun: loopfun.c
+	${CC} ${CFLAGS} -o $@ $^
 
 # pairwise comparison able, simplest possible idea ... turne out to be a bit thorny.
 pwco: pwco.c
