@@ -60,7 +60,7 @@ bz0: bz0.c
 
 
 # Nuritas 800 aa test
-aa: aa.c
+eqaa: eqaa.c
 	${CC} ${CFLAGS} -o $@ $^
 
 # dec to hex values 

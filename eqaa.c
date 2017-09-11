@@ -1,3 +1,4 @@
+/* eqaa.c equalise an amino acid sequence .. from the Nuritas test */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,7 +21,7 @@ typedef struct /*oc_t */
 	int q; //quantity
 } oc_t;
 
-typedef struct /*oc_t */
+typedef struct /*a_t */
 {
 	int *els; // elements of the array
 	int sz; //sze
@@ -29,7 +30,7 @@ typedef struct /*oc_t */
 
 void usage(char *pname)
 {
-	printf("Program \"%s\" to find smallest subsequence where amino-acid sequence has equal numbers of all AAs.\n");
+	printf("Program \"%s\" to find smallest subsequence where amino-acid sequence has equal numbers of all AAs.\n", aa);
 	return;
 }
 
@@ -123,7 +124,7 @@ int *cleverroute(char *aa, int aal)
 	for(;;) {
 		if(j>aal)
 			break;
-		if(arrl->els[kb]-ib > 2+ie-arrl->els[ke]) {
+		if(arrl->els[kb]-ib > ie-arrl->els[ke]) {
 			for(i=ib;i<=arrl->els[kb];++i) 
 				ia[j++]=i;
 			ib=1+arrl->els[kb];
@@ -142,6 +143,58 @@ int *cleverroute(char *aa, int aal)
 	return ia;
 }
 
+
+int *cleverroute2(char *aa, int aal)
+{
+	/* OK, this may look like an easy thing on the outside, but it's not really */
+	int i, ib, ie, j, kb /* k beginning */, ke /* k end */, k, ocsz=0;
+	a_t *arrl=catchl(aa, aal);
+	int *ia=malloc(aal*sizeof(int)); // index array
+	ib=0;
+	ie=aal-1;
+	j=0;
+	kb=0;
+	ke=arrl->sz-1;
+	int fromend=1;
+	int endp;
+	for(;;) {
+		// if(j>aal-2) {
+		printf("%i:%i \n", kb, ke); 
+		if(ke == kb-2) { /* pretty incredibly: yes */
+// 			printf("%zu : %i ", aal, j); 
+			break;
+		}
+		if(fromend) {
+			endp=(ke==kb-1)?arrl->els[ke]+1:arrl->els[ke];
+			printf("From %i to %i:", ie, endp);
+			for(i=ie;i>=endp;--i) {
+				ia[j++]=i;
+				printf("%i ", ia[j-1]);
+			}
+			printf("\n"); 
+			ie=arrl->els[ke]-1; // the new i-end for next time
+			ke--;
+			fromend++;
+			if(fromend==30)
+				fromend=0;
+		} else {
+			endp=(ke==kb-1)?arrl->els[kb]-1:arrl->els[kb];
+			printf("From %i to %i:", ib, endp);
+			for(i=ib;i<=endp;++i) {
+				ia[j++]=i;
+				printf("%i ", ia[j-1]);
+			}
+			printf("\n");
+			ib=1+arrl->els[kb];
+			kb++;
+			fromend=1;
+		}
+	}
+	printf("\n"); 
+	free(arrl->els);
+	free(arrl);
+	return ia;
+}
 
 void printaaoc(char *aa, oc_t *ocs2, int ocsz)
 {
@@ -237,17 +290,19 @@ char *occheckdynbe(char *aa, int aal, oc_t **ocs, int *gbp, int mxq, int *firstc
 	/* in this version we jump from one end of the string to the other in an attempt to corral in the substring from both sides */
 	int i, j, k, ocsz=0;
 	// a_t *arrl=catchl(aa, aal);
-	int *ia=cleverroute(aa, aal);
+	int *ia=cleverroute2(aa, aal);
+#ifdef DBG
 	for(i=0;i<aal;++i) 
 		printf("%i ", ia[i]); 
 	printf("\n"); 
+#endif
 	char *aa2=malloc((aal+1)*sizeof(char));
 
-	FLAG firstchangeeven, nolastch;
 	strcpy(aa2, aa);
 	int gb=*gbp;
 	oc_t *ocs2=*ocs;
-	unsigned char seenc;
+	unsigned char seenc; /* seen character .. has it already been seen? or is ithis a first time? */
+	int minp=aal, maxp=0;
 	*nchanges=0;
 	for(i=0; i<aal; i++) {
 		seenc=0;
@@ -264,17 +319,11 @@ char *occheckdynbe(char *aa, int aal, oc_t **ocs, int *gbp, int mxq, int *firstc
 #endif
 					aa2[ia[i]]=ocs2[k].l;
 					ocs2[k].q++;
-					if(*nchanges==0) {
-						*firstch=ia[i];
-						firstchangeeven=(i%2)?0:1; // note how I work here with i, not ia[i] because i have in mind how to deal with evens and unevens
-						nolastch=1;
-					} else if( (!firstchangeeven) & nolastch & !(i%2)) {
-						*lastch=ia[i]; // last change in this case need much cleverer calculation it the next opposit change!
-						nolastch=0;
-					} else if( firstchangeeven & nolastch & (i%2)) {
-						*lastch=ia[i]; // last change in this case need much cleverer calculation it the next opposit change!
-						nolastch=0;
-					}
+					/* in context of boucing index, not obvious how to mark extreme lower and extreem upper index .. but here's how: */
+					if(ia[i] < minp)
+						minp=ia[i];
+					if(ia[i] > maxp)
+						maxp=ia[i];
 					(*nchanges)++;
 				} else
 					ocs2[j].q++;
@@ -300,6 +349,9 @@ char *occheckdynbe(char *aa, int aal, oc_t **ocs, int *gbp, int mxq, int *firstc
 	for(i=0;i<ocsz;++i)
 		printf("%4i", ocs2[i].q);
 	printf("\n"); 
+	printf("Summary: Num changes to input string=%i, first change at %i and last change at %i\n", *nchanges, minp, maxp); 
+	int szsub=maxp-minp+1;
+	printf("Length of smallest substring for changes = %i, %2.2f times over the min num changes\n", szsub, (float)szsub/(*nchanges));
 	*ocs=ocs2;
 	aa2[aal]='\0';
 	free(ia);
@@ -533,10 +585,6 @@ int main(int argc, char *argv[])
 	printaaoc(aa2, ocs2, ocsz);
 	printcmp2str(aa, aa2);
 
-	printf("Summary: Num changes to input string=%i, first change at %i and last change at %i\n", nchanges, firstch, lastch); 
-	int szsub=lastch-firstch+1;
-	printf("Length of smallest substring for changes = %i, %2.2f times over the min num changes\n", szsub, (float)szsub/nchanges);
-
 	oc_t *ocs3=calloc(gb, sizeof(oc_t));
 	gb=GBUF;
 	// char *aa3=occheckbe(aa, aal, &ocs3, &gb, aal/ocsz, &firstch, &lastch, &nchanges); // seemed like a great idea .. but, no.
@@ -553,11 +601,11 @@ int main(int argc, char *argv[])
 	// free(arrl->els);
 	// free(arrl);
 
-// 	cleverroute(aa, aal);
+	// 	cleverroute(aa, aal);
 
 	free(ocs2);
 	free(aa2);
-	// free(ocs3);
+	free(ocs3);
 	// free(aa3);
 
 	return 0;
