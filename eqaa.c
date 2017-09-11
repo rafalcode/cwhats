@@ -30,7 +30,7 @@ typedef struct /*a_t */
 
 void usage(char *pname)
 {
-	printf("Program \"%s\" to find smallest subsequence where amino-acid sequence has equal numbers of all AAs.\n", aa);
+	printf("Program \"%s\" to find smallest subsequence where amino-acid sequence has equal numbers of all AAs.\n", "eqaa");
 	return;
 }
 
@@ -112,7 +112,7 @@ a_t *catchl(char *aa, int aal)
 
 int *cleverroute(char *aa, int aal)
 {
-	int i, ib, ie, j, kb /* k beginning */, ke /* k end */, k, ocsz=0;
+	int i, ib, ie, j, kb /* k beginning */, ke /* k end */;
 	a_t *arrl=catchl(aa, aal);
 	int *ia=malloc(aal*sizeof(int)); // index array
 	ib=0;
@@ -147,7 +147,7 @@ int *cleverroute(char *aa, int aal)
 int *cleverroute2(char *aa, int aal)
 {
 	/* OK, this may look like an easy thing on the outside, but it's not really */
-	int i, ib, ie, j, kb /* k beginning */, ke /* k end */, k, ocsz=0;
+	int i, ib, ie, j, kb /* k beginning */, ke /* k end */;
 	a_t *arrl=catchl(aa, aal);
 	int *ia=malloc(aal*sizeof(int)); // index array
 	ib=0;
@@ -175,7 +175,7 @@ int *cleverroute2(char *aa, int aal)
 			ie=arrl->els[ke]-1; // the new i-end for next time
 			ke--;
 			fromend++;
-			if(fromend==30)
+			if(fromend==42)
 				fromend=0;
 		} else {
 			endp=(ke==kb-1)?arrl->els[kb]-1:arrl->els[kb];
@@ -215,6 +215,10 @@ void printcmp2str(char *aa, char *aa2)
 	int i, j;
 	size_t aal1=strlen(aa);
 	size_t aal2=strlen(aa2);
+	if(aal1 != aal2) {
+		printf("Sorry, this comparison only allow equal sized strings.\n"); 
+		exit(EXIT_FAILURE);
+	}
 	int numchnks=aal1/ROWSZ;
 	int partchnk=aal1%ROWSZ;
 	for(i=0;i<aal1;++i) 
@@ -285,6 +289,45 @@ void ocfirst(char *aa, oc_t **ocs, int *gbp, size_t aal, int *ocsz2)
 	return;
 }
 
+void ocgo(char *aa, size_t aal)
+{
+	int i, j, ocsz=0;
+	int gb=GBUF;
+	oc_t *ocs=calloc(gb, sizeof(oc_t));
+	unsigned char seenc;
+	for(i=0; aa[i]!='\0'; i++) {
+		seenc=0;
+		for(j=0;j<ocsz;++j) {
+			if(aa[i]== ocs[j].l) {
+				seenc=1;
+				ocs[j].q++;
+				break;
+			}
+		}
+		if(seenc==0) {
+			if(ocsz==gb-1) {
+				gb+=GBUF;
+				ocs=realloc(ocs, gb*sizeof(oc_t));
+				for(j=gb-GBUF; j<gb; j++)
+					ocs[j].q=0;
+			}
+			ocs[ocsz].l=aa[i];
+			ocs[ocsz].q++;
+			ocsz++;
+		}
+	}
+	ocs=realloc(ocs, ocsz*sizeof(oc_t));
+	printf("%i aa's were seen\n", ocsz); 
+	for(i=0;i<ocsz;++i)
+		printf("%4c", ocs[i].l);
+	printf("\n"); 
+	for(i=0;i<ocsz;++i)
+		printf("%4i", ocs[i].q);
+	printf("\n"); 
+	free(ocs);
+	return;
+}
+
 char *occheckdynbe(char *aa, int aal, oc_t **ocs, int *gbp, int mxq, int *firstch, int *lastch, int *nchanges) // check from both endds .. dynamically.
 {
 	/* in this version we jump from one end of the string to the other in an attempt to corral in the substring from both sides */
@@ -324,6 +367,7 @@ char *occheckdynbe(char *aa, int aal, oc_t **ocs, int *gbp, int mxq, int *firstc
 						minp=ia[i];
 					if(ia[i] > maxp)
 						maxp=ia[i];
+					ocgo(aa2,aal);
 					(*nchanges)++;
 				} else
 					ocs2[j].q++;
@@ -582,30 +626,25 @@ int main(int argc, char *argv[])
 	//char *aa2=occheck(aa, aal, &ocs2, &gb, aal/ocsz, &firstch, &lastch, &nchanges);
 	char *aa2=occheckdynbe(aa, aal, &ocs2, &gb, aal/ocsz, &firstch, &lastch, &nchanges);
 
-	printaaoc(aa2, ocs2, ocsz);
-	printcmp2str(aa, aa2);
+	// printaaoc(aa2, ocs2, ocsz);
+	// printcmp2str(aa, aa2);
 
-	oc_t *ocs3=calloc(gb, sizeof(oc_t));
-	gb=GBUF;
+	// oc_t *ocs3=calloc(gb, sizeof(oc_t));
+	//  gb=GBUF;
+	nchanges=0;
 	// char *aa3=occheckbe(aa, aal, &ocs3, &gb, aal/ocsz, &firstch, &lastch, &nchanges); // seemed like a great idea .. but, no.
 	// char *aa3=occheckrev(aa, aal, &ocs3, &gb, aal/ocsz, &firstch, &lastch, &nchanges);
 
-	// printaaoc(aa3, ocs3, ocsz);
-	// printcmp2str(aa, aa3);
+	//printaaoc(aa3, ocs3, ocsz);
+	//printcmp2str(aa, aa3);
 
-	// printf("Summary: Num changes to input string=%i, first change at %i and last change at %i\n", nchanges, firstch, lastch); 
-	// szsub=firstch-lastch+1; // measured this and saw that if you subtract indices or positions you need to add 1.
-	// printf("Length of smallest substring for changes = %i, %2.2f times over the min num changes\n", szsub, (float)szsub/nchanges);
-
-	// a_t *arrl=catchl(aa, aal);
-	// free(arrl->els);
-	// free(arrl);
-
-	// 	cleverroute(aa, aal);
+	//printf("Summary: Num changes to input string=%i, first change at %i and last change at %i\n", nchanges, firstch, lastch); 
+	//int szsub=firstch-lastch+1; // measured this and saw that if you subtract indices or positions you need to add 1.
+	//printf("Length of smallest substring for changes = %i, %2.2f times over the min num changes\n", szsub, (float)szsub/nchanges);
 
 	free(ocs2);
 	free(aa2);
-	free(ocs3);
+	// free(ocs3);
 	// free(aa3);
 
 	return 0;

@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-g -Wall
 SPECLIBS=
 BZLIBS=-lbz2
-EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt hxv2 minlog10 aa loopfun
+EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun
 
 isqrt: isqrt.c
 	${CC} ${CFLAGS} -o $@ $^
