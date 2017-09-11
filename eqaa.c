@@ -60,6 +60,13 @@ int catchopts(optstruct *opts, int argc, char **argv)
 	return 0;
 }
 
+int cmpocs(const void *ocsa, const void *ocsb) /* compare uoa by occurence */
+{
+    oc_t *oa = (oc_t*)ocsa; /* cast our void! */
+    oc_t *ob = (oc_t*)ocsb; /* cast our void! */
+    return oa->l  - ob->l; /* lexicographic character comparison: returns positive if b > a and negative if a > b: i.e. highest values first */
+}
+
 void prtnoverreps(oc_t *ocs, int ocsz, int maxq)
 {
 	int i, novreps=0 /* number of over-representatives */;
@@ -81,6 +88,7 @@ int minlet(oc_t *ocs, int ocsz, int maxq)
 			mn=ocs[i].q;
 			mnidx=i;
 		}
+	printf("minlet was %c, its quan was %i and it unsorted idx was %i\n", ocs[mnidx].l, ocs[mnidx].q, i); 
 	return mnidx;
 }
 
@@ -147,6 +155,7 @@ int *cleverroute(char *aa, int aal)
 int *cleverroute2(char *aa, int aal)
 {
 	/* OK, this may look like an easy thing on the outside, but it's not really */
+	/* Beware indez 0 will get left out,, it indexing-from-beginning never gets a go */
 	int i, ib, ie, j, kb /* k beginning */, ke /* k end */;
 	a_t *arrl=catchl(aa, aal);
 	int *ia=malloc(aal*sizeof(int)); // index array
@@ -175,7 +184,7 @@ int *cleverroute2(char *aa, int aal)
 			ie=arrl->els[ke]-1; // the new i-end for next time
 			ke--;
 			fromend++;
-			if(fromend==42)
+			if(fromend==2)
 				fromend=0;
 		} else {
 			endp=(ke==kb-1)?arrl->els[kb]-1:arrl->els[kb];
@@ -243,6 +252,45 @@ void printcmp2str(char *aa, char *aa2)
 	return;
 }
 
+void ocgo(char *aa)
+{
+	int i, j, ocsz=0;
+	int gb=GBUF;
+	oc_t *ocs=calloc(gb, sizeof(oc_t));
+	unsigned char seenc;
+	for(i=0; aa[i]!='\0'; i++) {
+		seenc=0;
+		for(j=0;j<ocsz;++j) {
+			if(aa[i]== ocs[j].l) {
+				seenc=1;
+				ocs[j].q++;
+				break;
+			}
+		}
+		if(seenc==0) {
+			if(ocsz==gb-1) {
+				gb+=GBUF;
+				ocs=realloc(ocs, gb*sizeof(oc_t));
+				for(j=gb-GBUF; j<gb; j++)
+					ocs[j].q=0;
+			}
+			ocs[ocsz].l=aa[i];
+			ocs[ocsz].q++;
+			ocsz++;
+		}
+	}
+	ocs=realloc(ocs, ocsz*sizeof(oc_t));
+    qsort(ocs, ocsz, sizeof(oc_t), cmpocs);
+	for(i=0;i<ocsz;++i)
+		printf("%4c", ocs[i].l);
+	printf("\n"); 
+	for(i=0;i<ocsz;++i)
+		printf("%4i", ocs[i].q);
+	printf("\n"); 
+	free(ocs);
+	return;
+}
+
 void ocfirst(char *aa, oc_t **ocs, int *gbp, size_t aal, int *ocsz2)
 {
 	int i, j, ocsz=0;
@@ -272,6 +320,7 @@ void ocfirst(char *aa, oc_t **ocs, int *gbp, size_t aal, int *ocsz2)
 		}
 	}
 	ocs2=realloc(ocs2, ocsz*sizeof(oc_t));
+    // qsort(ocs2, ocsz, sizeof(oc_t), cmpocs);
 	printf("%i aa's were seen\n", ocsz); 
 	for(i=0;i<ocsz;++i)
 		printf("%4c", ocs2[i].l);
@@ -289,35 +338,10 @@ void ocfirst(char *aa, oc_t **ocs, int *gbp, size_t aal, int *ocsz2)
 	return;
 }
 
-void ocgo(char *aa, size_t aal)
+void prtoc(oc_t *ocs, int ocsz)
 {
-	int i, j, ocsz=0;
-	int gb=GBUF;
-	oc_t *ocs=calloc(gb, sizeof(oc_t));
-	unsigned char seenc;
-	for(i=0; aa[i]!='\0'; i++) {
-		seenc=0;
-		for(j=0;j<ocsz;++j) {
-			if(aa[i]== ocs[j].l) {
-				seenc=1;
-				ocs[j].q++;
-				break;
-			}
-		}
-		if(seenc==0) {
-			if(ocsz==gb-1) {
-				gb+=GBUF;
-				ocs=realloc(ocs, gb*sizeof(oc_t));
-				for(j=gb-GBUF; j<gb; j++)
-					ocs[j].q=0;
-			}
-			ocs[ocsz].l=aa[i];
-			ocs[ocsz].q++;
-			ocsz++;
-		}
-	}
-	ocs=realloc(ocs, ocsz*sizeof(oc_t));
-	printf("%i aa's were seen\n", ocsz); 
+	int i, j;
+    qsort(ocs, ocsz, sizeof(oc_t), cmpocs);
 	for(i=0;i<ocsz;++i)
 		printf("%4c", ocs[i].l);
 	printf("\n"); 
@@ -353,22 +377,19 @@ char *occheckdynbe(char *aa, int aal, oc_t **ocs, int *gbp, int mxq, int *firstc
 			if(aa2[ia[i]]== ocs2[j].l) {
 				seenc=1;
 				if(ocs2[j].q == mxq) {
-#ifdef DBG
-					printf("Max quan found at %i with %c\n", ia[i], ocs2[j].l); 
-#endif
+					printf("Max quan found at %i with %c  ...", ia[i], ocs2[j].l); 
 					k=minlet(ocs2, ocsz, mxq);
-#ifdef DBG
 					printf("minchar %c:%i\n", ocs2[k].l, ocs2[k].q);
-#endif
 					aa2[ia[i]]=ocs2[k].l;
 					ocs2[k].q++;
-					/* in context of boucing index, not obvious how to mark extreme lower and extreem upper index .. but here's how: */
+					/* in context of bouncing index, not obvious how to mark extreme lower and extreme upper index .. but here's how: */
 					if(ia[i] < minp)
 						minp=ia[i];
 					if(ia[i] > maxp)
 						maxp=ia[i];
-					ocgo(aa2,aal);
+					ocgo(aa2);
 					(*nchanges)++;
+					printf("=> nchanges=%i\n", *nchanges); 
 				} else
 					ocs2[j].q++;
 				break;
@@ -387,12 +408,6 @@ char *occheckdynbe(char *aa, int aal, oc_t **ocs, int *gbp, int mxq, int *firstc
 		}
 	}
 	ocs2=realloc(ocs2, ocsz*sizeof(oc_t));
-	for(i=0;i<ocsz;++i)
-		printf("%4c", ocs2[i].l);
-	printf("\n"); 
-	for(i=0;i<ocsz;++i)
-		printf("%4i", ocs2[i].q);
-	printf("\n"); 
 	printf("Summary: Num changes to input string=%i, first change at %i and last change at %i\n", *nchanges, minp, maxp); 
 	int szsub=maxp-minp+1;
 	printf("Length of smallest substring for changes = %i, %2.2f times over the min num changes\n", szsub, (float)szsub/(*nchanges));
@@ -546,6 +561,7 @@ char *occheck(char *aa, int aal, oc_t **ocs, int *gbp, int mxq, int *firstch, in
 	strcpy(aa2, aa);
 	int gb=*gbp;
 	oc_t *ocs2=*ocs;
+	// prtoc(ocs2, ocsz);
 	unsigned char seenc;
 	*nchanges=0;
 	for(i=0; aa2[i]!='\0'; i++) {
@@ -566,6 +582,7 @@ char *occheck(char *aa, int aal, oc_t **ocs, int *gbp, int mxq, int *firstch, in
 					if(*nchanges==0)
 						*firstch=i;
 					*lastch=i;
+					ocgo(aa2);
 					(*nchanges)++;
 				} else
 					ocs2[j].q++;
@@ -604,7 +621,8 @@ int main(int argc, char *argv[])
 		exit(EXIT_SUCCESS);
 	}
 	// introduce sequence as string literal
-	char *aa="ASQLDRFRVFLGWDNGMMLVYQGNKTYEPWLNCDMASPTLSLVSKKAPKILKAADINTTLQPCLAFFIELLLKGIDNERIPNSGSGGREMGLLAPTYSSEATLVTRENNMMEGVHGFENMQDVEVIKLKLPEGYSDVCHFMFMLAGILYIVYDLQMHMSSERETGKFPNPLSDEEFDNPKVVVTNSFVLLEFTVTGAGARPSEQGQEPHNLGATKGSLAISSKTPEIHKDTNPASAQFEGKHTESDAKGVSNEDVFITKERDGREVEPTIKLSKKSVLNPMNVVYNPMLQISEGALRKHSMNDEITILNNTLINKERSVDLGAVSFVNDLLIDKLGCVSGKLAVQLNQSAPPEILHGKDPLTLFLGNTIALMLSKMQRIRVWEEYIFLNLHLALAWEPLLGNLKTHDSQKKWALCGFLIISRIRNLFESEGPVHGLRFSAMPCNTDTRQIKALERFPYAPEKPQWHGDELESPCRLVVASKLLASHDGVSIGKTIGSWPLPAQRYNAYVAWAANDSSILSARPGFAVKEDRLGHSLAQESGTIVVRNPQYGVRFINYNKDEHREFKREATFYPKTVVTHLGAIEGTLMFEIGDAAFTMLHLEEATDAEVRELYYMDMLDKKSSLGRACERIRRVLAPGDHKANGLESAIVSGQNGYEGRIRGLQTFQSNPLKKGRTHMAFCTTLHPFGGLKLVSSQLLKKELAVGTYGHQRTVLHSAEYSCPTSIPNLEGLMYNLISAQGEVNSDAKCHYAALAYICLQVRSVSMNQTEASDLRNFLETPILANDALASEQLLGSKKAKS";
+	// char *aa="ASQLDRFRVFLGWDNGMMLVYQGNKTYEPWLNCDMASPTLSLVSKKAPKILKAADINTTLQPCLAFFIELLLKGIDNERIPNSGSGGREMGLLAPTYSSEATLVTRENNMMEGVHGFENMQDVEVIKLKLPEGYSDVCHFMFMLAGILYIVYDLQMHMSSERETGKFPNPLSDEEFDNPKVVVTNSFVLLEFTVTGAGARPSEQGQEPHNLGATKGSLAISSKTPEIHKDTNPASAQFEGKHTESDAKGVSNEDVFITKERDGREVEPTIKLSKKSVLNPMNVVYNPMLQISEGALRKHSMNDEITILNNTLINKERSVDLGAVSFVNDLLIDKLGCVSGKLAVQLNQSAPPEILHGKDPLTLFLGNTIALMLSKMQRIRVWEEYIFLNLHLALAWEPLLGNLKTHDSQKKWALCGFLIISRIRNLFESEGPVHGLRFSAMPCNTDTRQIKALERFPYAPEKPQWHGDELESPCRLVVASKLLASHDGVSIGKTIGSWPLPAQRYNAYVAWAANDSSILSARPGFAVKEDRLGHSLAQESGTIVVRNPQYGVRFINYNKDEHREFKREATFYPKTVVTHLGAIEGTLMFEIGDAAFTMLHLEEATDAEVRELYYMDMLDKKSSLGRACERIRRVLAPGDHKANGLESAIVSGQNGYEGRIRGLQTFQSNPLKKGRTHMAFCTTLHPFGGLKLVSSQLLKKELAVGTYGHQRTVLHSAEYSCPTSIPNLEGLMYNLISAQGEVNSDAKCHYAALAYICLQVRSVSMNQTEASDLRNFLETPILANDALASEQLLGSKKAKS";
+	char *aa="ASQLDRFRVFLGWDNGMMLVYQGNKTYEPWLNCDMA";
 
 	size_t aal=strlen(aa);
 	printf("aa length=%zu\n", aal); 
@@ -615,6 +633,7 @@ int main(int argc, char *argv[])
 	int gb=GBUF;
 	oc_t *ocs=calloc(gb, sizeof(oc_t));
 	ocfirst(aa, &ocs, &gb, aal, &ocsz);
+	prtoc(ocs, &ocsz);
 	int maxq=aal/ocsz;
 	prtnoverreps(ocs, ocsz, maxq);
 	free(ocs);
@@ -623,8 +642,8 @@ int main(int argc, char *argv[])
 	gb=GBUF;
 	int nchanges=0, firstch=0, lastch=0;
 	oc_t *ocs2=calloc(gb, sizeof(oc_t));
-	//char *aa2=occheck(aa, aal, &ocs2, &gb, aal/ocsz, &firstch, &lastch, &nchanges);
-	char *aa2=occheckdynbe(aa, aal, &ocs2, &gb, aal/ocsz, &firstch, &lastch, &nchanges);
+	char *aa2=occheck(aa, aal, &ocs2, &gb, aal/ocsz, &firstch, &lastch, &nchanges);
+	// char *aa2=occheckdynbe(aa, aal, &ocs2, &gb, aal/ocsz, &firstch, &lastch, &nchanges);
 
 	// printaaoc(aa2, ocs2, ocsz);
 	// printcmp2str(aa, aa2);
