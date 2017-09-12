@@ -67,7 +67,27 @@ int cmpocs(const void *ocsa, const void *ocsb) /* compare uoa by occurence */
     return oa->l  - ob->l; /* lexicographic character comparison: returns positive if b > a and negative if a > b: i.e. highest values first */
 }
 
-void prtnoverreps(oc_t *ocs, int ocsz, int maxq)
+int cmpocs2(const void *ocsa, const void *ocsb) /* compare uoa by occurence */
+{
+    oc_t *oa = (oc_t*)ocsa; /* cast our void! */
+    oc_t *ob = (oc_t*)ocsb; /* cast our void! */
+    return oa->q  - ob->q; /* compare quanitities */
+}
+
+void prtoc(oc_t *ocs, int ocsz)
+{
+	int i;
+    // qsort(ocs, ocsz, sizeof(oc_t), cmpocs);
+	for(i=0;i<ocsz;++i)
+		printf("%4c", ocs[i].l);
+	printf("\n"); 
+	for(i=0;i<ocsz;++i)
+		printf("%4i", ocs[i].q);
+	printf("\n"); 
+	return;
+}
+
+int prtnoverreps(oc_t *ocs, int ocsz, int maxq)
 {
 	int i, novreps=0 /* number of over-representatives */;
 	for(i=0; i<ocsz; i++)
@@ -75,7 +95,7 @@ void prtnoverreps(oc_t *ocs, int ocsz, int maxq)
 			novreps+=ocs[i].q -maxq;
 		}
 	printf("Number by which overrepresented chars exceed %i = %i\n", maxq, novreps);
-	return;
+	return novreps;
 }
 
 int minlet(oc_t *ocs, int ocsz, int maxq)
@@ -90,6 +110,20 @@ int minlet(oc_t *ocs, int ocsz, int maxq)
 		}
 	printf("minlet was %c, its quan was %i and it unsorted idx was %i\n", ocs[mnidx].l, ocs[mnidx].q, i); 
 	return mnidx;
+}
+
+int *minlet2(oc_t *ocs, int ocsz, int novreps, int maxq)
+{
+	int i, j, k, times;
+	int *isched=calloc(novreps, sizeof(int)); // index schedule
+	k=0;
+	for(i=0; i<ocsz; i++)
+		if(ocs[i].q<maxq) {
+			times=maxq - ocs[i].q;
+			for(j=0;j<times;++j) 
+				isched[k++]=i;
+		}
+	return isched;
 }
 
 a_t *catchl(char *aa, int aal)
@@ -205,19 +239,6 @@ int *cleverroute2(char *aa, int aal)
 	return ia;
 }
 
-void prtoc(oc_t *ocs, int ocsz)
-{
-	int i;
-    qsort(ocs, ocsz, sizeof(oc_t), cmpocs);
-	for(i=0;i<ocsz;++i)
-		printf("%4c", ocs[i].l);
-	printf("\n"); 
-	for(i=0;i<ocsz;++i)
-		printf("%4i", ocs[i].q);
-	printf("\n"); 
-	return;
-}
-
 void printaaoc(char *aa, oc_t *ocs2, int ocsz)
 {
 	int i;
@@ -293,13 +314,6 @@ void ocgo(char *aa)
 		}
 	}
 	ocs=realloc(ocs, ocsz*sizeof(oc_t));
-    qsort(ocs, ocsz, sizeof(oc_t), cmpocs);
-	for(i=0;i<ocsz;++i)
-		printf("%4c", ocs[i].l);
-	printf("\n"); 
-	for(i=0;i<ocsz;++i)
-		printf("%4i", ocs[i].q);
-	printf("\n"); 
 	free(ocs);
 	return;
 }
@@ -333,7 +347,6 @@ void ocfirst(char *aa, oc_t **ocs, int *gbp, size_t aal, int *ocsz2)
 		}
 	}
 	ocs2=realloc(ocs2, ocsz*sizeof(oc_t));
-    qsort(ocs2, ocsz, sizeof(oc_t), cmpocs);
 	// printf("equal quan should be %zu\n", aal/ocsz); 
 	*ocs=ocs2;
 	*ocsz2=ocsz;
@@ -367,7 +380,7 @@ char *occheckdynbe(char *aa, int aal, oc_t **ocs, int *ocsz2, int *gbp, int mxq,
 			if(aa2[ia[i]]== ocs2[j].l) {
 				seenc=1;
 				if(ocs2[j].q > mxq) {
-					printf("Max quan found at %i with %c  ...", ia[i], ocs2[j].l); 
+					printf("Max quan found at %i with %c giving %i  ...", ia[i], ocs2[j].l, ocs2[j].q); 
 					k=minlet(ocs2, ocsz, mxq);
 					printf("minchar %c:%i\n", ocs2[k].l, ocs2[k].q);
 					aa2[ia[i]]=ocs2[k].l;
@@ -378,6 +391,74 @@ char *occheckdynbe(char *aa, int aal, oc_t **ocs, int *ocsz2, int *gbp, int mxq,
 					if(ia[i] > maxp)
 						maxp=ia[i];
 					ocgo(aa2);
+					(*nchanges)++;
+					printf("=> nchanges=%i\n", *nchanges); 
+				} else
+					ocs2[j].q++;
+				break;
+			}
+		}
+		if(seenc==0) {
+			if(ocsz==gb-1) {
+				gb+=GBUF;
+				ocs2=realloc(ocs2, gb*sizeof(oc_t));
+				for(j=gb-GBUF; j<gb; j++)
+					ocs2[j].q=0;
+			}
+			ocs2[ocsz].l=aa2[ia[i]];
+			ocs2[ocsz].q++;
+			ocsz++;
+		}
+	}
+	ocs2=realloc(ocs2, ocsz*sizeof(oc_t));
+	printf("Summary: Num changes to input string=%i, first change at %i and last change at %i\n", *nchanges, minp, maxp); 
+	int szsub=maxp-minp+1;
+	printf("Length of smallest substring for changes = %i, %2.2f times over the min num changes\n", szsub, (float)szsub/(*nchanges));
+	*ocs=ocs2;
+	aa2[aal]='\0';
+	free(ia);
+	return aa2;
+}
+
+char *occheckdynbe2(char *aa, int aal, oc_t **ocs, int *ocsz2, int *gbp, int mxq, int novreps, int *nchanges, int *isched) // check from both endds .. dynamically.
+{
+	/* in this version we jump from one end of the string to the other in an attempt to corral in the substring from both sides */
+	int i, ii=0, j, k;
+	// a_t *arrl=catchl(aa, aal);
+	int *ia=cleverroute2(aa, aal);
+#ifdef DBG
+	for(i=0;i<aal;++i) 
+		printf("%i ", ia[i]); 
+	printf("\n"); 
+#endif
+	char *aa2=malloc((aal+1)*sizeof(char));
+
+	strcpy(aa2, aa);
+	int gb=*gbp;
+	oc_t *ocs2=*ocs;
+	int ocsz=*ocsz2;
+	prtoc(ocs2, ocsz);
+	unsigned char seenc; /* seen character .. has it already been seen? or is ithis a first time? */
+	int minp=aal, maxp=0;
+	*nchanges=0;
+	for(i=0; i<aal; i++) {
+		seenc=0;
+		for(j=0;j<ocsz;++j) {
+			if(aa2[ia[i]]== ocs2[j].l) {
+				seenc=1;
+				if(ocs2[j].q > mxq) {
+					printf("Max quan found at %i with %c giving %i  ...", ia[i], ocs2[j].l, ocs2[j].q); 
+					k=isched[ii++];
+					printf("minchar %c:%i\n", ocs2[k].l, ocs2[k].q);
+					aa2[ia[i]]=ocs2[k].l;
+					ocs2[k].q++;
+					/* in context of bouncing index, not obvious how to mark extreme lower and extreme upper index .. but here's how: */
+					if(ia[i] < minp)
+						minp=ia[i];
+					if(ia[i] > maxp)
+						maxp=ia[i];
+					ocgo(aa2);
+					prtoc(ocs2, ocsz);
 					(*nchanges)++;
 					printf("=> nchanges=%i\n", *nchanges); 
 				} else
@@ -617,7 +698,7 @@ int main(int argc, char *argv[])
 	size_t aal=strlen(aa);
 	printf("aa length=%zu\n", aal); 
 
-	int ocsz=0;
+	int i, ocsz=0;
 
 	// first pass
 	int gb=GBUF;
@@ -628,34 +709,31 @@ int main(int argc, char *argv[])
 		exit(EXIT_FAILURE);
 	}
 	int maxq=aal/ocsz;
-	prtnoverreps(ocs, ocsz, maxq);
+	int novreps=prtnoverreps(ocs, ocsz, maxq);
 	prtoc(ocs, ocsz);
 
 	// second pass
 	gb=GBUF;
+	int *isched=minlet2(ocs, ocsz, novreps, maxq);
+	for(i=0;i<novreps;++i) 
+		printf("%i ", isched[i]); 
+	printf("\n"); 
 	int nchanges=0;
-	// char *aa2=occheck(aa, aal, &ocs2, &gb, aal/ocsz, &firstch, &lastch, &nchanges);
-	char *aa2=occheckdynbe(aa, aal, &ocs, &ocsz, &gb, aal/ocsz, &nchanges);
+	size_t ocsz2=0;
+	oc_t *ocs2=calloc(gb, sizeof(oc_t));
+	char *aa2=occheckdynbe2(aa, aal, &ocs2, &ocsz2, &gb, maxq, novreps, &nchanges, isched);
 
 	// printaaoc(aa2, ocs2, ocsz);
 	// printcmp2str(aa, aa2);
 
-	// oc_t *ocs3=calloc(gb, sizeof(oc_t));
-	//  gb=GBUF;
-	nchanges=0;
-	// char *aa3=occheckbe(aa, aal, &ocs3, &gb, aal/ocsz, &firstch, &lastch, &nchanges); // seemed like a great idea .. but, no.
-	// char *aa3=occheckrev(aa, aal, &ocs3, &gb, aal/ocsz, &firstch, &lastch, &nchanges);
-
-	//printaaoc(aa3, ocs3, ocsz);
-	//printcmp2str(aa, aa3);
 
 	//printf("Summary: Num changes to input string=%i, first change at %i and last change at %i\n", nchanges, firstch, lastch); 
 	//int szsub=firstch-lastch+1; // measured this and saw that if you subtract indices or positions you need to add 1.
 	//printf("Length of smallest substring for changes = %i, %2.2f times over the min num changes\n", szsub, (float)szsub/nchanges);
 
 	free(aa2);
-	// free(ocs3);
-	// free(aa3);
+	free(isched);
+	free(ocs2);
 
 	return 0;
 }
