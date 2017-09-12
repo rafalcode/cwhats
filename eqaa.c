@@ -202,19 +202,19 @@ int *cleverroute2(char *aa, int aal)
 	int endp;
 	for(;;) {
 		// if(j>aal-2) {
-		printf("%i:%i \n", kb, ke); 
+		// printf("%i:%i \n", kb, ke); 
 		if(ke == kb-2) { /* pretty incredibly: yes */
 // 			printf("%zu : %i ", aal, j); 
 			break;
 		}
 		if(fromend) {
 			endp=(ke==kb-1)?arrl->els[ke]+1:arrl->els[ke];
-			printf("From %i to %i:", ie, endp);
+			// printf("From %i to %i:", ie, endp);
 			for(i=ie;i>=endp;--i) {
 				ia[j++]=i;
-				printf("%i ", ia[j-1]);
+				// printf("%i ", ia[j-1]);
 			}
-			printf("\n"); 
+			// printf("\n"); 
 			ie=arrl->els[ke]-1; // the new i-end for next time
 			ke--;
 			fromend++;
@@ -222,18 +222,17 @@ int *cleverroute2(char *aa, int aal)
 				fromend=0;
 		} else {
 			endp=(ke==kb-1)?arrl->els[kb]-1:arrl->els[kb];
-			printf("From %i to %i:", ib, endp);
+			// printf("From %i to %i:", ib, endp);
 			for(i=ib;i<=endp;++i) {
 				ia[j++]=i;
-				printf("%i ", ia[j-1]);
+				// printf("%i ", ia[j-1]);
 			}
-			printf("\n");
+			// printf("\n");
 			ib=1+arrl->els[kb];
 			kb++;
 			fromend=1;
 		}
 	}
-	printf("\n"); 
 	free(arrl->els);
 	free(arrl);
 	return ia;
@@ -432,12 +431,11 @@ char *occheckdynbe2(char *aa, int aal, oc_t **ocs, int *ocsz2, int *gbp, int mxq
 	printf("\n"); 
 #endif
 	char *aa2=malloc((aal+1)*sizeof(char));
+	strcpy(aa2, aa); // aa fully copied over to aa2 so 
 
-	strcpy(aa2, aa);
 	int gb=*gbp;
 	oc_t *ocs2=*ocs;
 	int ocsz=*ocsz2;
-	prtoc(ocs2, ocsz);
 	unsigned char seenc; /* seen character .. has it already been seen? or is ithis a first time? */
 	int minp=aal, maxp=0;
 	*nchanges=0;
@@ -447,7 +445,7 @@ char *occheckdynbe2(char *aa, int aal, oc_t **ocs, int *ocsz2, int *gbp, int mxq
 			if(aa2[ia[i]]== ocs2[j].l) {
 				seenc=1;
 				if(ocs2[j].q > mxq) {
-					printf("Max quan found at %i with %c giving %i  ...", ia[i], ocs2[j].l, ocs2[j].q); 
+					printf("%c over maxq found at idx %i with %c giving %i  ...", ia[i], ocs2[j].l, ocs2[j].q); 
 					k=isched[ii++];
 					printf("minchar %c:%i\n", ocs2[k].l, ocs2[k].q);
 					aa2[ia[i]]=ocs2[k].l;
