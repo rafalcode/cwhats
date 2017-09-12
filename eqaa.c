@@ -205,6 +205,19 @@ int *cleverroute2(char *aa, int aal)
 	return ia;
 }
 
+void prtoc(oc_t *ocs, int ocsz)
+{
+	int i;
+    qsort(ocs, ocsz, sizeof(oc_t), cmpocs);
+	for(i=0;i<ocsz;++i)
+		printf("%4c", ocs[i].l);
+	printf("\n"); 
+	for(i=0;i<ocsz;++i)
+		printf("%4i", ocs[i].q);
+	printf("\n"); 
+	return;
+}
+
 void printaaoc(char *aa, oc_t *ocs2, int ocsz)
 {
 	int i;
@@ -320,42 +333,17 @@ void ocfirst(char *aa, oc_t **ocs, int *gbp, size_t aal, int *ocsz2)
 		}
 	}
 	ocs2=realloc(ocs2, ocsz*sizeof(oc_t));
-    // qsort(ocs2, ocsz, sizeof(oc_t), cmpocs);
-	printf("%i aa's were seen\n", ocsz); 
-	for(i=0;i<ocsz;++i)
-		printf("%4c", ocs2[i].l);
-	printf("\n"); 
-	for(i=0;i<ocsz;++i)
-		printf("%4i", ocs2[i].q);
-	printf("\n"); 
-	if(aal%ocsz!=0) {
-		printf("Error:length not dvisible by number of different aa's\n"); 
-		exit(EXIT_FAILURE);
-	}
+    qsort(ocs2, ocsz, sizeof(oc_t), cmpocs);
 	// printf("equal quan should be %zu\n", aal/ocsz); 
 	*ocs=ocs2;
 	*ocsz2=ocsz;
 	return;
 }
 
-void prtoc(oc_t *ocs, int ocsz)
-{
-	int i, j;
-    qsort(ocs, ocsz, sizeof(oc_t), cmpocs);
-	for(i=0;i<ocsz;++i)
-		printf("%4c", ocs[i].l);
-	printf("\n"); 
-	for(i=0;i<ocsz;++i)
-		printf("%4i", ocs[i].q);
-	printf("\n"); 
-	free(ocs);
-	return;
-}
-
-char *occheckdynbe(char *aa, int aal, oc_t **ocs, int *gbp, int mxq, int *firstch, int *lastch, int *nchanges) // check from both endds .. dynamically.
+char *occheckdynbe(char *aa, int aal, oc_t **ocs, int *ocsz2, int *gbp, int mxq, int *nchanges) // check from both endds .. dynamically.
 {
 	/* in this version we jump from one end of the string to the other in an attempt to corral in the substring from both sides */
-	int i, j, k, ocsz=0;
+	int i, j, k;
 	// a_t *arrl=catchl(aa, aal);
 	int *ia=cleverroute2(aa, aal);
 #ifdef DBG
@@ -368,6 +356,8 @@ char *occheckdynbe(char *aa, int aal, oc_t **ocs, int *gbp, int mxq, int *firstc
 	strcpy(aa2, aa);
 	int gb=*gbp;
 	oc_t *ocs2=*ocs;
+	int ocsz=*ocsz2;
+	prtoc(ocs2, ocsz);
 	unsigned char seenc; /* seen character .. has it already been seen? or is ithis a first time? */
 	int minp=aal, maxp=0;
 	*nchanges=0;
@@ -376,7 +366,7 @@ char *occheckdynbe(char *aa, int aal, oc_t **ocs, int *gbp, int mxq, int *firstc
 		for(j=0;j<ocsz;++j) {
 			if(aa2[ia[i]]== ocs2[j].l) {
 				seenc=1;
-				if(ocs2[j].q == mxq) {
+				if(ocs2[j].q > mxq) {
 					printf("Max quan found at %i with %c  ...", ia[i], ocs2[j].l); 
 					k=minlet(ocs2, ocsz, mxq);
 					printf("minchar %c:%i\n", ocs2[k].l, ocs2[k].q);
@@ -633,17 +623,19 @@ int main(int argc, char *argv[])
 	int gb=GBUF;
 	oc_t *ocs=calloc(gb, sizeof(oc_t));
 	ocfirst(aa, &ocs, &gb, aal, &ocsz);
-	prtoc(ocs, &ocsz);
+	if(aal%ocsz!=0) {
+		printf("Error:length not dvisible by number of different aa's\n"); 
+		exit(EXIT_FAILURE);
+	}
 	int maxq=aal/ocsz;
 	prtnoverreps(ocs, ocsz, maxq);
-	free(ocs);
+	prtoc(ocs, ocsz);
 
 	// second pass
 	gb=GBUF;
-	int nchanges=0, firstch=0, lastch=0;
-	oc_t *ocs2=calloc(gb, sizeof(oc_t));
-	char *aa2=occheck(aa, aal, &ocs2, &gb, aal/ocsz, &firstch, &lastch, &nchanges);
-	// char *aa2=occheckdynbe(aa, aal, &ocs2, &gb, aal/ocsz, &firstch, &lastch, &nchanges);
+	int nchanges=0;
+	// char *aa2=occheck(aa, aal, &ocs2, &gb, aal/ocsz, &firstch, &lastch, &nchanges);
+	char *aa2=occheckdynbe(aa, aal, &ocs, &ocsz, &gb, aal/ocsz, &nchanges);
 
 	// printaaoc(aa2, ocs2, ocsz);
 	// printcmp2str(aa, aa2);
@@ -661,7 +653,6 @@ int main(int argc, char *argv[])
 	//int szsub=firstch-lastch+1; // measured this and saw that if you subtract indices or positions you need to add 1.
 	//printf("Length of smallest substring for changes = %i, %2.2f times over the min num changes\n", szsub, (float)szsub/nchanges);
 
-	free(ocs2);
 	free(aa2);
 	// free(ocs3);
 	// free(aa3);
