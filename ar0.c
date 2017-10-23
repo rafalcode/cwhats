@@ -1,6 +1,8 @@
+/* sundry tiny experiments all in the one program */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 
 #define GSZ 4
 
@@ -10,6 +12,15 @@
  * declaring an nondynamic array for the first time. */
 int main(int argc, char *argv[])
 {
+	int num;
+	/* checking to see if this style of ternary will work ...yes it does */
+	num=9-(GSZ==4)?0:1;
+	printf("num is %i\n",num);
+
+	char *inf="thisone.wha";
+	char *per=NULL;
+	per=strchr(inf, '.');
+	printf("%.*s_2.wah\n", (int)(per-inf), inf);
 
     int i;
    /* declarations */
