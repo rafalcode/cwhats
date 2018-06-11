@@ -10,6 +10,14 @@ typedef struct
     char **pca; /* pointer to charaqcter array */
 } ca_t;
 
+
+void reall_pca(ca_t *c)
+{
+    c->sz=10;
+    (*c->pca)=realloc((*c->pca), c->sz*sizeof(char));
+    return;
+}
+
 int main(int argc, char *argv[])
 {
     int i;
@@ -30,6 +38,14 @@ int main(int argc, char *argv[])
    for(i=0;i<c->sz;++i) 
        (*c->pca)[i] = (char)(i+65);
        // tc[i]=(char)(i+65);
+
+
+   /* but does all this work? There's just that one pointer-to-pointer
+    * how easy is it to re-allocate? */
+   reall_pca(c);
+
+   for(i=5;i<c->sz;++i) 
+       (*c->pca)[i] = (char)(i+65);
 
    for(i=0;i<c->sz;++i) 
        // printf("%c ", tc[i]);
