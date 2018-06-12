@@ -35,24 +35,31 @@ void prt_aca(aca_t *ac)
     return;
 }
 
-
-
+void assign_c(ca_t *c)
+{
+    int j;
+    c->sz = 5;
+    c->pca = malloc(sizeof(char*));
+    (*c->pca) = malloc(c->sz*sizeof(char));
+    for(j=0;j<c->sz;j++)
+        (*c->pca)[j] =(char)(j+65);
+    return;
+}
 
 int main(int argc, char *argv[])
 {
     int i, j;
-    char *tc=NULL; /* temporary char ptr */
-    ca_t *tca=NULL; /* temporary char ptr */
     aca_t *ac=malloc(sizeof(aca_t));
     ac->sz=3;
     ac->c=malloc(sizeof(ca_t*));
     (*ac->c)=malloc(ac->sz*sizeof(ca_t));
     for(i=0;i<ac->sz;++i) {
-        (*ac->c)[i].sz = 5;
-        (*ac->c)[i].pca = malloc(sizeof(char*));
-        (*(*ac->c)[i].pca) = malloc((*ac->c)[i].sz*sizeof(char));
-        for(j=0;j<(*ac->c)[i].sz;j++)
-            (*(*ac->c)[i].pca)[j] =(char)(i*(*ac->c)[i].sz+j+65);
+        // (*ac->c)[i].sz = 5;
+        // (*ac->c)[i].pca = malloc(sizeof(char*));
+        // (*(*ac->c)[i].pca) = malloc((*ac->c)[i].sz*sizeof(char));
+        // for(j=0;j<(*ac->c)[i].sz;j++)
+        //     (*(*ac->c)[i].pca)[j] =(char)(i*(*ac->c)[i].sz+j+65);
+        assign_c((*ac->c)+i);
     }
     prt_aca(ac);
     /* freeing stuff */
