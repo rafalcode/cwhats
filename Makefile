@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-g -Wall
 SPECLIBS=
 BZLIBS=-lbz2
-EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0
+EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 given of stc dst2
 
 isqrt: isqrt.c
 	${CC} ${CFLAGS} -o $@ $^
@@ -34,6 +34,15 @@ three2b: three2b.c
 
 mn0: mn0.c
 	${CC} ${CFLAGS} -o $@ $^
+given: given.c
+	${CC} ${CFLAGS} -o $@ $^
+of: of.c
+	${CC} ${CFLAGS} -o $@ $^
+stc: stc.c
+	${CC} ${CFLAGS} -o $@ $^
+dst2: dst2.c
+	${CC} ${CFLAGS} -o $@ $^
+
 
 loopfun: loopfun.c
 	${CC} ${CFLAGS} -o $@ $^
@@ -73,6 +82,11 @@ minlog10: minlog10.c
 # using strtok (never use string literals liek so: chr *s="mymistake"; rather use char s[]="mymistake";
 tok0: tok0.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
+
+binrd0: binrd0.c
+	${CC} ${CFLAGS} -o $@ $^ -lm
+
+.PHONY: clean
 
 .PHONY: clean
 
