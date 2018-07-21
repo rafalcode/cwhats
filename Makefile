@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-g -Wall
 SPECLIBS=
 BZLIBS=-lbz2
-EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 given of stc dst2
+EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 given of stc dst2 rea0 recu0 recu1
 
 isqrt: isqrt.c
 	${CC} ${CFLAGS} -o $@ $^
@@ -84,6 +84,25 @@ tok0: tok0.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
 
 binrd0: binrd0.c
+	${CC} ${CFLAGS} -o $@ $^ -lm
+
+fg0: fg0.c
+	${CC} ${CFLAGS} -o $@ $^ -lm
+
+rea0: rea0.c
+	${CC} ${CFLAGS} -o $@ $^ -lm
+
+
+# genread.c has been basis for too long, it was by no means perfect. Behold v2, more watertight .. hoepfully.
+# # read Char Array (aka word type)
+rdca: rdca.c
+	${CC} ${CFLAGS} -o $@ $^ -lm
+
+recu0: recu0.c
+	${CC} ${CFLAGS} -o $@ $^ -lm
+
+
+recu1: recu1.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
 
 .PHONY: clean

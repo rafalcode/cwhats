@@ -35,9 +35,7 @@ int catchopts(optstruct *opstru, int oargc, char **oargv)
                 else if (isprint (optopt))
                     fprintf (stderr, "Unknown option `-%c'.\n", optopt);
                 else
-                    fprintf (stderr,
-                            "Unknown option character `\\x%x'.\n",
-                            optopt);
+                    fprintf (stderr, "Unknown option character `\\x%x'.\n", optopt);
                 return 1;
             default:
                 abort();
@@ -59,11 +57,18 @@ int catchopts(optstruct *opstru, int oargc, char **oargv)
     return 0;
 }
 
+void prthlp(void)
+{
+    printf("Option-catching test program. First two arguments are, however, ignored.\n"); 
+    return;
+}
+
+
 int main (int argc, char **argv)
 {
     int i;
     optstruct opstru={0};
-    int argignore=2;
+    int argignore=2; //
     int oargc=argc-argignore;
     char **oargv=argv+argignore;
     catchopts(&opstru, oargc, oargv);
