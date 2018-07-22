@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-g -Wall
 SPECLIBS=
 BZLIBS=-lbz2
-EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 given of stc dst2 rea0 recu0 recu1
+EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 given of stc dst2 rea0 recu0 recu1 recu2 recukmr
 
 isqrt: isqrt.c
 	${CC} ${CFLAGS} -o $@ $^
@@ -101,8 +101,13 @@ rdca: rdca.c
 recu0: recu0.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
 
-
 recu1: recu1.c
+	${CC} ${CFLAGS} -o $@ $^ -lm
+
+recu2: recu2.c
+	${CC} ${CFLAGS} -o $@ $^ -lm
+
+recukmr: recukmr.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
 
 .PHONY: clean
