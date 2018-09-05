@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-g -Wall
 SPECLIBS=
 BZLIBS=-lbz2
-EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 given of stc dst2 rea0 recu0 recu1 recu2 recukmr
+EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 given of stc dst2 rea0 recu0 recu1 recu2 recukmr rek0 reksyll0
 
 isqrt: isqrt.c
 	${CC} ${CFLAGS} -o $@ $^
@@ -43,6 +43,9 @@ stc: stc.c
 dst2: dst2.c
 	${CC} ${CFLAGS} -o $@ $^
 
+# testing directory things ... very trivial, but seem to forget it.
+dirs0: dirs0.c
+	${CC} ${CFLAGS} -o $@ $^
 
 loopfun: loopfun.c
 	${CC} ${CFLAGS} -o $@ $^
@@ -109,8 +112,15 @@ recu2: recu2.c
 
 recukmr: recukmr.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
+rek0: rek0.c
+	${CC} ${CFLAGS} -o $@ $^ -lm
 
-.PHONY: clean
+
+# recursively generating sylables.
+# reksyll0: reksyll0.c
+sy: sy.c
+	${CC} ${CFLAGS} -o $@ $^ -lm
+
 
 .PHONY: clean
 
