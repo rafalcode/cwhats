@@ -8,10 +8,77 @@
 
 #define GBUF 64
 
+struct chch /* chch_t: char chain, in my early code it was dcn_t */
+{
+    char c;
+    struct chch *nc;
+};
+typedef struct chch chch_t;
+
 typedef struct /* ia_t, index array type */
 {
     unsigned **i /* indices */, bf /* buffer for size value*/ , sz /* final unoccupied index aka size */;
 } ia_t;
+
+chch_t *crea_chch(size_t chln) /* create empty ring of size chln */
+{
+    int i;
+    chch_t *mou /* mouth with a tendency to eat the tail*/, *tai /* tail */, *ttmp /* type temporary */;
+
+    mou=malloc(sizeof(chch_t)); /* mouth */
+    mou->c='\0';
+    tai=malloc(sizeof(chch_t)); /* tail */
+    tai->c='\0';
+    ttmp=mou;
+    for(i=1;i<chln-1;++i) {
+        ttmp->nc=malloc(sizeof(chch_t));
+        ttmp->nc->c='\0';
+        ttmp=ttmp->nc; /* with ->ncmove on */
+    }
+    ttmp->nc=tai;
+    tai->nc=mou; /* this is the vital connection, the underwater one */
+    return mou;
+}
+
+chch_t *crea_chch2(char *strng) /* from a string */
+{
+
+    chch_t *mou=malloc(sizeof(chch_t));
+    chch_t *tmou=mou->nc;
+    int i=0;
+    mou->c=strng[i++];
+    while(strng[i]) {
+        tmou=malloc(sizeof(chch_t));
+        tmou->c=strng[i];
+        tmou=tmou->nc; /* move on */
+        i++;
+    }
+    tmou = mou;
+    return mou;
+}
+
+void prt_chch(chch_t *cch)
+{
+    putchar(cch->c);
+    chch_t *tmou= cch->nc;
+    while(tmou != cch) {
+        putchar(tmou->c);
+        tmou = tmou->nc;
+    }
+    putchar('\n');
+
+}
+
+void free_chch(chch_t *mou)
+{
+    chch_t *st=mou->nc, *nxt;
+    while (st !=mou) {
+        nxt=st->nc;
+        free(st);
+        st=nxt;
+    }
+    free(mou);
+}
 
 ia_t *crea_ia(void)
 {
@@ -106,6 +173,11 @@ int main(int argc, char *argv[])
 
     free_ia(ia);
     free(txt);
+
+    // chch_t *cch=crea_chch(5);
+    chch_t *cch=crea_chch2("whatis");
+    prt_chch(cch);
+    free_chch(cch);
 
     return 0;
 }
