@@ -125,7 +125,7 @@ ti0: ti0.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
 
 fread0: fread0.c
-	${CC} ${CFLAGS} -o $@ $^ -lm
+	${CC} ${CFLAGS} -o $@ $^
 
 .PHONY: clean
 

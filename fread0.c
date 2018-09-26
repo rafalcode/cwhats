@@ -8,6 +8,57 @@
 
 #define GBUF 64
 
+typedef struct /* ia_t, index array type */
+{
+    unsigned **i /* indices */, bf /* buffer for size value*/ , sz /* final unoccupied index aka size */;
+} ia_t;
+
+ia_t *crea_ia(void)
+{
+    ia_t *ia=malloc(sizeof(ia_t));
+    ia->bf=GBUF;
+    ia->sz=0;
+    ia->i=malloc(sizeof(unsigned*));
+    (*ia->i)=malloc(ia->bf*sizeof(unsigned));
+    return ia;
+}
+
+void reall_ia(ia_t *ia)
+{
+    ia->bf += GBUF;
+    (*ia->i)=realloc((*ia->i), ia->bf*sizeof(unsigned));
+    return;
+}
+
+void free_ia(ia_t *ia)
+{
+    free((*ia->i));
+    free(ia->i);
+    free(ia);
+    return;
+}
+
+void norm_ia(ia_t *ia)
+{
+    (*ia->i)=realloc((*ia->i), ia->sz*sizeof(unsigned));
+    return;
+}
+
+void naiveprt_txtia(char *txt, ia_t *ia)
+{
+    /* the most naive print */
+    int i, j;
+    /* first line needs special treatment */
+    for(j=0; j<=(*ia->i)[0]; j++)
+        putchar(txt[j]);
+    /* rest can be done in a loop though beware if final character is not a newline .. they usually are */
+    for(i=1;i<ia->sz;i++) {
+        for(j=(*ia->i)[i-1]+1; j<=(*ia->i)[i]; j++)
+            putchar(txt[j]);
+    }
+    return;
+}
+
 void prtusage(void)
 {
     printf("quick text file slurper using fread.\n"); 
@@ -23,29 +74,38 @@ int main(int argc, char *argv[])
 
 	struct stat ifsta;
 	if(stat(argv[1], &ifsta) == -1) {
-		fprintf(stderr, "Problem with argument 1: Can't ifstat input file %s", trueopts->inpfn);
+		fprintf(stderr, "Problem with argument 1: Can't ifstat input file %s", argv[1]);
 		exit(EXIT_FAILURE);
 	}
 
     FILE *inf=fopen(argv[1], "r");
-    char *indata=calloc(sz+1, sizeof(char));
-    if ( fread(indata, sz, sizeof(char), inf) < 1 ) {
-        printf("Can't read file\n");
+    char *txt=calloc(ifsta.st_size, sizeof(char));
+    if ( fread(txt, ifsta.st_size, sizeof(char), inf) < 1 ) {
+        printf("%s file can be ifstat'd, but isn't being read properly.\n", argv[1]);
         exit(EXIT_FAILURE);
     }
     fclose(inf);
 
     int i, cou=0;
-    for(i=0;i<sz;++i) {
-        printf("%u ", (unsigned)indata[i]); 
-        if(127<(unsigned)indata[i])
-            cou++;
+    ia_t *ia=crea_ia();
+    for(i=0;i<ifsta.st_size;++i) {
+        if(txt[i] == '\n') {
+            if(ia->sz == ia->bf-1)
+                reall_ia(ia);
+            (*ia->i)[cou++] = i;
+            ia->sz = cou;
+        }
     }
-    printf("\n"); 
-    printf("#vals over 127 was %i\n", cou);
-    if(!cou)
-        printf("Read chars were:\n%s\n", indata); 
+    norm_ia(ia);
 
-    free(indata);
+    for(i=0;i<ia->sz;++i) 
+        printf("%i ", (*ia->i)[i]);
+    printf("\n"); 
+
+    naiveprt_txtia(txt, ia);
+
+    free_ia(ia);
+    free(txt);
+
     return 0;
 }
