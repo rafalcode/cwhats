@@ -7,6 +7,7 @@
 #include<sys/stat.h>
 
 #define GBUF 64
+typedef unsigned char boole;
 
 struct chch /* chch_t: char chain, in my early code it was dcn_t */
 {
@@ -42,20 +43,39 @@ chch_t *crea_chch(size_t chln) /* create empty ring of size chln */
 
 chch_t *crea_chch2(char *strng) /* from a string */
 {
-
+    /* I had trouble returning to this after a few years, because I for got some elemental points:
+     * don't assign temporary pointers to things that have not been directly allocated yet. I.e. only point 
+     * to properly malloc'd stuff. */
     chch_t *mou=malloc(sizeof(chch_t));
-    chch_t *tmou=mou->nc;
+    chch_t *tmou=mou; /* don't dare assign tmou to mou->nc, it has not been allocated */
     int i=0;
     mou->c=strng[i++];
     while(strng[i]) {
-        tmou=malloc(sizeof(chch_t));
-        tmou->c=strng[i];
+        tmou->nc=malloc(sizeof(chch_t));
+        tmou->nc->c=strng[i++];
         tmou=tmou->nc; /* move on */
-        i++;
     }
-    tmou = mou;
+    tmou->nc = mou;
     return mou;
 }
+
+// void roll_cchst(chch_t *char *strng) /* from a string */
+// {
+//     /* I had trouble returning to this after a few years, because I for got some elemental points:
+//      * don't assign temporary pointers to things that have not been directly allocated yet. I.e. only point 
+//      * to properly malloc'd stuff. */
+//     chch_t *mou=malloc(sizeof(chch_t));
+//     chch_t *tmou=mou; /* don't dare assign tmou to mou->nc, it has not been allocated */
+//     int i=0;
+//     mou->c=strng[i++];
+//     while(strng[i]) {
+//         tmou->nc=malloc(sizeof(chch_t));
+//         tmou->nc->c=strng[i++];
+//         tmou=tmou->nc; /* move on */
+//     }
+//     tmou->nc = mou;
+//     return mou;
+// }
 
 void prt_chch(chch_t *cch)
 {
@@ -66,8 +86,26 @@ void prt_chch(chch_t *cch)
         tmou = tmou->nc;
     }
     putchar('\n');
-
+    return;
 }
+
+// boole roll_chch(chch_t *cch, char *strng)
+// {
+//     boole ret=1;
+//     boole matchyes=0;
+//     chch_t *tmou= cch;
+//     while(strng[i]) {
+//         while {
+//             if(!matchyes) {
+//                 ZZ
+// 
+//         } (tmou !=mou)
+//         ifputchar(tmou->c);
+//         tmou = tmou->nc;
+//     }
+//     putchar('\n');
+// 
+// }
 
 void free_chch(chch_t *mou)
 {
