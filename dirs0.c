@@ -15,23 +15,26 @@
 
 int main(int argc, char *argv[])
 {
-    char *myt=calloc(32, sizeof(char));
-    strcpy(myt, DNAME);
+	if(argc != 2) {
+        printf("Test an introduced directory name, by touching a file inside it.\n"); 
+		exit(EXIT_FAILURE);
+	}
+    size_t dnlen=strlen(argv[1]);
+    size_t rflen=strlen(FNAME);
 
     DIR *d;
-    if((d = opendir(myt)) == NULL) {
-        printf("directory %s doesn't exist.\n", DNAME); 
-        free(myt);
+    if((d = opendir(argv[1])) == NULL) {
+        printf("directory %s doesn't exist. Bailing out.\n", argv[1]); 
         exit(EXIT_FAILURE);
     }
     closedir(d);
-    strcat(myt, "/");
-    strcat(myt, FNAME);
+    char *buf=calloc(dnlen+rflen+1+1, sizeof(char)); /* +1 for slash, +1 for zero term */
+    sprintf(buf, "%s/%s", argv[1], FNAME);
+    printf("Attempting now to touch %s.\n", buf); 
 
-    FILE *fp=fopen(myt, "w");
+    FILE *fp=fopen(buf, "w");
     fclose(fp);
-
-    free(myt);
+    free(buf);
 
     return 0;
 }

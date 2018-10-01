@@ -44,6 +44,7 @@ dst2: dst2.c
 	${CC} ${CFLAGS} -o $@ $^
 
 # testing directory things ... very trivial, but seem to forget it.
+# show how the ~ char in bash does (of course!) resolve properly
 dirs0: dirs0.c
 	${CC} ${CFLAGS} -o $@ $^
 
@@ -126,6 +127,9 @@ ti0: ti0.c
 
 fread0: fread0.c
 	${CC} ${CFLAGS} -o $@ $^
+
+ssl0: ssl0.c
+	${CC} ${CFLAGS} -o $@ $^ -lcrypto
 
 .PHONY: clean
 
