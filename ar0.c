@@ -32,5 +32,7 @@ int main(int argc, char *argv[])
        printf("%d ", ar[i]); 
    printf("\n"); 
 
+   fprintf(stdout, "this to stdout\n");
+
    return 0;
 }
