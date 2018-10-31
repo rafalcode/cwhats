@@ -40,3 +40,7 @@ However one or two notes about recursion are in order.
 * recursion and trees and very very related.
 * recursion also closely related to the Kronecker product.
 * most of the c progam is recording the progress of the recursion tree by storing intermediate results properly in an array
+
+## aownsa.c
+Quite an interesting exercise that I hadn't thought of before. THis program works on the simplest implementation
+where with have an owning array, later called parent array with a limited number of elements, in this case floating point values between 0 and 1, generated randomly. We want to be able to take a second, and bigger array of the same type which can be called a child array and allocate its elements to the elements of the first array based on distance to the nearest element.
