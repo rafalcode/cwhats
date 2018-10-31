@@ -59,23 +59,23 @@ chch_t *crea_chch2(char *strng) /* from a string */
     return mou;
 }
 
-// void roll_cchst(chch_t *char *strng) /* from a string */
-// {
-//     /* I had trouble returning to this after a few years, because I for got some elemental points:
-//      * don't assign temporary pointers to things that have not been directly allocated yet. I.e. only point 
-//      * to properly malloc'd stuff. */
-//     chch_t *mou=malloc(sizeof(chch_t));
-//     chch_t *tmou=mou; /* don't dare assign tmou to mou->nc, it has not been allocated */
-//     int i=0;
-//     mou->c=strng[i++];
-//     while(strng[i]) {
-//         tmou->nc=malloc(sizeof(chch_t));
-//         tmou->nc->c=strng[i++];
-//         tmou=tmou->nc; /* move on */
-//     }
-//     tmou->nc = mou;
-//     return mou;
-// }
+void roll_cchst(chch_t *cch, size_t chln, char *strng) /* rol chain along a string */
+{
+    /* I had trouble returning to this after a few years, because I for got some elemental points:
+     * don't assign temporary pointers to things that have not been directly allocated yet. I.e. only point 
+     * to properly malloc'd stuff. */
+    chch_t *tmou=cch;
+    int i=0;
+    tmou->c=strng[i++];
+    while(strng[i]) {
+        putchar(tmou->c);
+        tmou=tmou->nc;
+        tmou->c=strng[i++];
+        putchar(' ');
+    }
+    putchar('\n');
+    return;
+}
 
 void prt_chch(chch_t *cch)
 {
@@ -213,8 +213,10 @@ int main(int argc, char *argv[])
     free(txt);
 
     // chch_t *cch=crea_chch(5);
-    chch_t *cch=crea_chch2("whatis");
+    chch_t *cch=crea_chch2("wha");
     prt_chch(cch);
+
+    roll_cchst(cch, 3, "kavanaugh");
     free_chch(cch);
 
     return 0;
