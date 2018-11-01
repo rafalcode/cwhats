@@ -150,6 +150,9 @@ aownsa: aownsa.c
 # change from floating point to long longs!
 aownsai: aownsai.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
+# very simple lines in cairo
+cairlin0: cairlin0.c
+	${CC} ${CFLAGS} -o $@ $^ -lm -lcairo
 
 .PHONY: clean
 
