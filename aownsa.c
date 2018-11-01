@@ -7,6 +7,7 @@
 #include <math.h>
 
 #define SETSEED 0 // note 300th element on arr2 is actually 1.000 in this run!
+#define LIMTYPESZ 10
 
 typedef struct  /* optstruct, a struct for the options */
 {
@@ -45,7 +46,7 @@ int cmpflo(const void *flo1, const void *flo2)
         return 0;
 }
 
-float uplim01(float *arr1, int idx, int sz) // upper limit
+float uplim01(float *arr1, int idx, int sz, char *limtype) // upper limit
 {
     /* upper limit of a certain index's ownership
      * this function only useful if called from a loop
@@ -56,8 +57,10 @@ float uplim01(float *arr1, int idx, int sz) // upper limit
     if(idx==sz-1)
         ret=1.;
         // ret=arr1[sz-1];
-    else
+    else if( !strcmp("pt_as_mid", limtype) )
         ret=arr1[idx]+(arr1[idx+1]-arr1[idx])/2.;
+    else if( !strcmp("pt_as_spl", limtype) )
+        ret=arr1[idx];
 
     return ret;
 }
