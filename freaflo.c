@@ -230,33 +230,52 @@ int main(int argc, char *argv[])
 
     int i, cou=0, couel=1; // because EOF follows newline
     /* we're going to keep the buffer flat, as it is, and record where the new lines appear */
-    ia_t *ianl=crea_ia(); // the index array of newlines
-    for(i=0;i<ifsta.st_size;++i) {
-        if(txt[i] == '\n') {
+    ia_t *ianl=crea_ia(); // the index array of spots where there's a double newline (separate float array)
+    for(i=1;i<ifsta.st_size;++i) {
+        if( (txt[i] == '\n') & (txt[i-1] == '\n')) {
             if(ianl->sz == ianl->bf-1)
                 reall_ia(ianl);
             (*ianl->i)[cou] = i;
-            if( (*ianl->i)[cou-1] == (*ianl->i)[cou]-1 )
-                couel++; // empty line appeared
             cou++;
             ianl->sz = cou;
         }
     }
     norm_ia(ianl);
 #ifdef DBG
-    printf("couel %i\n", couel); 
     for(i=0;i<ianl->sz;++i) 
         printf("%i ", (*ianl->i)[i]);
     printf("\n"); 
 #endif
 
-    fa_t **faa=malloc(couel*sizeof(fa_t*));
-    for(i=0;i<couel;++i) 
+    fa_t **faa=malloc(ianl->sz*sizeof(fa_t*));
+    for(i=0;i<ianl->sz;++i) 
         faa[i]=crea_fa();
     float tmpflo;
-// TODO must sscanf them now    
 
-    for(i=0;i<couel;++i) 
+    int totfcou = 0 /* total float count */, totbcou = 0, fcou, bcou;
+    int acou=0; // which array in faa?
+    while ( ( fcou = sscanf(txt + totbcou, "%f%n", (float)((*faa[acou]->f) + totfcou), &bcou )) > 0 ) {
+        if(totbcou == (*ianl->i)[acou]-2) {
+            norm_fa(faa[acou]);
+            totfcou=0;
+            acou++;
+        }
+        if(faa[acou]->sz == faa[acou]->bf-1)
+            reall_fa(faa[acou]);
+        totbcou += bcou;
+        totfcou += fcou;
+    }
+    // final one
+    norm_fa(faa[acou]);
+
+    /* and print out float array array */
+    for(i=0;i<ianl->sz;++i) {
+        for(j=0;j<faa[i]->sz;++j) 
+            printf("%4.4f ", (*faa[i]->f)[j]); 
+        printf("\n"); 
+    }
+
+    for(i=0;i<ianl->sz;++i) 
         free_fa(faa[i]);
 
     free_ia(ianl);
