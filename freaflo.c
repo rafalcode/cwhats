@@ -22,9 +22,10 @@ typedef struct /* ia_t, index array type */
     unsigned **i /* indices */, bf /* buffer for size value*/ , sz /* final unoccupied index aka size */;
 } ia_t;
 
-typedef struct /* ia_t, index array type */
+typedef struct /* fa_t, float array type */
 {
-    unsigned **f /* indices */, bf /* buffer for size value*/ , sz /* final unoccupied index aka size */;
+    float **f /* flaot vals */;
+    unsigned bf /* buffer for size value*/ , sz /* final unoccupied index aka size */;
 } fa_t;
 
 chch_t *crea_chch(size_t chln) /* create empty ring of size chln */
@@ -126,11 +127,14 @@ void free_chch(chch_t *mou)
 
 fa_t *crea_fa(void)
 {
+    int i;
     fa_t *fa=malloc(sizeof(fa_t));
     fa->bf=GBUF;
     fa->sz=0;
     fa->f=malloc(sizeof(float*));
     (*fa->f)=malloc(fa->bf*sizeof(float));
+    for(i=0;i<fa->bf;++i) 
+        (*fa->f)[i]=0.333;
     return fa;
 }
 
@@ -228,7 +232,7 @@ int main(int argc, char *argv[])
     }
     fclose(inf);
 
-    int i, cou=0, couel=1; // because EOF follows newline
+    int i, j, cou=0;
     /* we're going to keep the buffer flat, as it is, and record where the new lines appear */
     ia_t *ianl=crea_ia(); // the index array of spots where there's a double newline (separate float array)
     for(i=1;i<ifsta.st_size;++i) {
@@ -250,11 +254,14 @@ int main(int argc, char *argv[])
     fa_t **faa=malloc(ianl->sz*sizeof(fa_t*));
     for(i=0;i<ianl->sz;++i) 
         faa[i]=crea_fa();
-    float tmpflo;
 
-    int totfcou = 0 /* total float count */, totbcou = 0, fcou, bcou;
+    int totfcou = 1 /* total float count */, totbcou = 0, fcou, bcou;
     int acou=0; // which array in faa?
-    while ( ( fcou = sscanf(txt + totbcou, "%f%n", (float)((*faa[acou]->f) + totfcou), &bcou )) > 0 ) {
+    float f1;
+    // while ( ( fcou = sscanf(txt + totbcou, "%f%n", (float*)((*faa[acou]->f) + totfcou), &bcou )) > 0 ) {
+    while ( ( fcou = sscanf(txt + totbcou, "%f%n", (&(*faa[acou]->f)[totfcou]), &bcou )) > 0 ) {
+    // while ( ( fcou = sscanf(txt + totbcou, "%f%n", &f1, &bcou )) > 0 ) {
+        // printf("f1: %4.4f\n", f1); yes, cones out here.
         if(totbcou == (*ianl->i)[acou]-2) {
             norm_fa(faa[acou]);
             totfcou=0;
