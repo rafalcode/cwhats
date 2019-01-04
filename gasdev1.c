@@ -1,3 +1,10 @@
+/* this is the numerical recips code for this
+ * with and if(idmun<1) quit line missing I think
+ *
+ * what's curious about this is how trig functions are avoided
+ * and every second time the gset calculation is avoided.
+ *
+ * with v1 and v2 being rands (-1,+1) we get r [0,1) in radius format then. */
 #include <math.h>
 
 float gasdev(int *idum)
