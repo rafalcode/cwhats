@@ -9,6 +9,12 @@
 #define NUMHBARS 6
 #define STRBUF 128 /* ample but not excessive buffer, woul dneed to be modified later */
 #define STRPBUF 128 /* ample but not excessive buffer, woul dneed to be modified later */
+#define NAMBUF 32 /*  colour name length */
+
+typedef struct {
+    char nam[NAMBUF];
+    float rgb[3];
+} colstru_f;
 
 void creatch(cairo_t *cr, char *alphabet, int im_w, int im_h)
 {
@@ -53,6 +59,8 @@ void creatstr(cairo_t *cr, char *alphabet, int cnv_w, int cnv_h)
 
 int main (int argc, char *argv[])
 {
+    colstru_f colsf[18] = { {"foreground", {0.866667, 0.866667, 0.866667} }, {"background", {0.066667, 0.066667, 0.066667} }, {"color0", {0.098039, 0.098039, 0.098039} }, {"color8", {0.627451, 0.321569, 0.176471} }, {"color1", {0.501961, 0.196078, 0.196078} }, {"color9", {0.596078, 0.168627, 0.168627} }, {"color2", {0.356863, 0.462745, 0.184314} }, {"color10", {0.537255, 0.721569, 0.247059} }, {"color3", {0.666667, 0.600000, 0.262745} }, {"color11", {0.937255, 0.937255, 0.376471} }, {"color4", {0.196078, 0.298039, 0.501961} }, {"color12", {0.168627, 0.309804, 0.596078} }, {"color5", {0.439216, 0.423529, 0.603922} }, {"color13", {0.509804, 0.415686, 0.694118} }, {"color6", {0.572549, 0.694118, 0.619608} }, {"color14", {0.631373, 0.803922, 0.803922} }, {"color7", {1.000000, 1.000000, 1.000000} }, {"color15", {0.866667, 0.866667, 0.866667} } };
+
     int i, im_w=640, im_h=480;
     int lmarp=(int)im_w*.05; // left margin ... but the position, mind.
     int rmarp=im_w - lmarp; //right margin ... but the position, mind.
@@ -95,7 +103,8 @@ int main (int argc, char *argv[])
         vposl[i] = vposl[i-1] + hbarh;
 
 /* dot placement */
-    cairo_set_source_rgba(cr, 0.85, 0.1, 0.2, 0.8);
+    cairo_set_source_rgb(cr, 0.85, 0.1, 0.2);
+    cairo_set_source_rgb(cr, 1., 1. , 1.);
     for(i=0;i<NUMHBARS;i++) {
         cairo_arc(cr, lmarp+i*im_w/NUMHBARS, vposl[i], 3, 0, 2 * M_PI);
         cairo_fill(cr);
@@ -103,7 +112,7 @@ int main (int argc, char *argv[])
 
     /* Drawing code goes here */
     cairo_set_source_rgba(cr, 0.65, 0.8, 0.45, 1.0);
-    cairo_set_line_width (cr, 0.75); /* thinnest really possible */
+    cairo_set_line_width (cr, 3); /* thinnest really possible */
     for(i=0;i<NUMHBARS;i++) {
         cairo_move_to(cr, lmarp, vposl[i]);
         cairo_line_to(cr, rmarp, vposl[i]);
