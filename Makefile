@@ -162,6 +162,9 @@ cairlin0: cairlin0.c
 sscanflo: sscanflo.c
 	${CC} ${CFLAGS} -o $@ $^
 
+ifbreak: ifbreak.c
+	${CC} ${CFLAGS} -o $@ $^
+
 .PHONY: clean
 
 clean:
