@@ -12,10 +12,22 @@
 #define MAXISZ 8 // max size of the integer
 #define boolean unsigned char
 
-#define CONDREALLOC2(x, b, c, a, t); \
+#define CONDREALLOC(x, b, c, a, t); \
     if((x)==(b)) { \
         (b) += (c); \
         (a)=realloc((a), (b)*sizeof(t)); \
+    }
+
+// following is hard coded for uoa_t and j!
+#define CONDREALLOC2(x, b, c, a); \
+    if((x)==(b)) { \
+        (b) += (c); \
+        (a)=realloc((a), (b)*sizeof(uoa_t)); \
+            for(j=(b) - (c); j<(b);++j) { \
+                uoa[j].uoibf=(c); \
+                uoa[j].uoids=malloc(uoa[j].uoibf*sizeof(int)); \
+                uoa[j].uoisz=0; \
+            } \
     }
 
 typedef struct /* uoa Unique Occurence Array type: the UO here refers to the length of the sequence: i.e. the occurence of a certain sequnce length. You'll need to remember that :-) . */
@@ -33,13 +45,14 @@ int cmpuoabyo(const void *a, const void *b) /* compare uoa by occurence */
     return ua->uo  - ub->uo; /* integer comparison: returns positive if b > a and nagetive if a > b: i.e. highest values first */
 }
 
-void popua(uoa_t *uoi, unsigned xtrasz)
+void prtuoa(uoa_t *uoa, int uoasz)
 {
-    int i;
-    for(i=0;i<xtrasz;++i) {
-        uoa+i).uoibf=GBUF;
-        uoa+j).uoids=malloc(uoa[j].uoibf*sizeof(unsigned));
-        uoa+i).uoisz=0;
+    int i, j;
+    for(j=0; j<uoasz;++j) {
+        printf("%i: ", uoa[j].uo);
+        for(i=0;i<uoa[i].uoisz;++i) 
+            printf("%u ", uoa[j].uoids[i]);
+        putchar('\n');
     }
 }
 
@@ -52,7 +65,7 @@ uoa_t *uniquelens(int *v, int vsz, int *uoasz_)
     uoa_t *uoa=calloc(uoabuf, sizeof(uoa_t));
     for(i=0;i<uoabuf;++i) {
         uoa[i].uoibf=GBUF;
-        uoa[j].uoids=malloc(uoa[j].uoibf*sizeof(unsigned));
+        uoa[i].uoids=malloc(uoa[i].uoibf*sizeof(unsigned));
         uoa[i].uoisz=0;
     }
 
@@ -60,7 +73,7 @@ uoa_t *uniquelens(int *v, int vsz, int *uoasz_)
         new=1;
         for(j=0; j<uoasz;++j) {
             if(uoa[j].uo == v[i]) {
-                CONDREALLOC2(uoa[j].uoisz, uoa[j].uoibuf, GBUF, uoa[j].uoids, unsigned);
+                CONDREALLOC(uoa[j].uoisz, uoa[j].uoibf, GBUF, uoa[j].uoids, unsigned);
                 uoa[j].uoids[uoa[j].uoisz] = i;
                 uoa[j].uoisz++;
                 new=0;
@@ -69,13 +82,16 @@ uoa_t *uniquelens(int *v, int vsz, int *uoasz_)
         }
         if(new) {
             uoasz++;
-            CONDREALLOC2(uoasz, uoabuf, GBUF, uoa, uoa_t);
+            CONDREALLOC2(uoasz, uoabuf, GBUF, uoa);
             uoa[uoasz-1].uo = v[i];
             uoa[uoasz-1].uoisz = 1;
-            uoa[uoasz-1].uoids=realloc(uoa[j].uoids, uoa[j].uoisz*sizeof(unsigned));
+            // uoa[uoasz-1].uoids=realloc(uoa[j].uoids, uoa[j].uoisz*sizeof(unsigned));
             uoa[uoasz-1].uoids[uoa[j].uoisz-1] = i;
         }
     }
+    for(i=uoasz;i<uoabuf;++i) 
+        free(uoa[i].uoids);
+    uoa=realloc(uoa, uoasz*sizeof(uoa_t));
 
     qsort(uoa, uoasz, sizeof(uoa_t), cmpuoabyo);
 #ifdef DBG
@@ -89,17 +105,6 @@ uoa_t *uniquelens(int *v, int vsz, int *uoasz_)
 #endif
     *uoasz_ = uoasz;
     return uoa;
-}
-
-void prtuoa(uoa_t *uoa, int uoasz)
-{
-    int i, j;
-    for(j=0; j<uoasz;++j) {
-        printf("%i: ", uoa[j].uo);
-        for(i=0;i<uoa[i].uoisz;++i) 
-            printf("%u ", uoa[j].uoids[i]);
-        putchar('\n');
-    }
 }
 
 void prtusage(char *progname)
