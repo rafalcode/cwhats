@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
    printf("Res_1: %i\n", p3);
    p3 |= 0x04;
    printf("Res_1: %i\n", p3);
+   printf("Res_1: %x\n", 0x45&0xF0);
 
    return 0;
 }
