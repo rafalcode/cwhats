@@ -7,33 +7,35 @@
 #include <sys/stat.h>
 #include <dirent.h> 
 
-#define GBUF 4
-#define MAXVSZ 40
-#define MAXISZ 8 // max size of the integer
+#define GBUF 2
+#define MAXVSZ 16
+#define MAXISZ 5 // max size of the integer
 #define boolean unsigned char
 
 #define CONDREALLOC(x, b, c, a, t); \
-    if((x)==(b)) { \
+    if((x)>=((b)-1)) { \
         (b) += (c); \
         (a)=realloc((a), (b)*sizeof(t)); \
     }
 
-// following is hard coded for uoa_t and j!
+// following is hard coded for uoa_t and it has its own iterative index, k9 for fun and uniqueness.
 #define CONDREALLOC2(x, b, c, a); \
-    if((x)==(b)) { \
+    int k9; \
+    if((x)>=((b)-1)) { \
         (b) += (c); \
         (a)=realloc((a), (b)*sizeof(uoa_t)); \
-            for(j=(b) - (c); j<(b);++j) { \
-                uoa[j].uoibf=(c); \
-                uoa[j].uoids=malloc(uoa[j].uoibf*sizeof(int)); \
-                uoa[j].uoisz=0; \
+            for(k9=(b) - (c); k9<(b);++k9) { \
+                uoa[k9].uoibf=(c); \
+                uoa[k9].uoids=malloc(uoa[k9].uoibf*sizeof(int)); \
+                uoa[k9].uoisz=0; \
+                uoa[k9].uo=-1; \
             } \
     }
 
 typedef struct /* uoa Unique Occurence Array type: the UO here refers to the length of the sequence: i.e. the occurence of a certain sequnce length. You'll need to remember that :-) . */
 {
-    unsigned uo; /* the unique occurence this array entry refers to */
-    int *uoids; /* the ids of the sequences for this unqiue occurence */
+    int uo; /* the unique occurence this array entry refers to */
+    int *uoids; /* the indices corresponding to the uo unique occurence. */
     int uoisz; /* the actual size of the array */
     int uoibf; /* the actual size of the array */
 } uoa_t;
@@ -49,8 +51,8 @@ void prtuoa(uoa_t *uoa, int uoasz)
 {
     int i, j;
     for(j=0; j<uoasz;++j) {
-        printf("%i: ", uoa[j].uo);
-        for(i=0;i<uoa[i].uoisz;++i) 
+        printf("val %i (sz=%i): ", uoa[j].uo, uoa[j].uoisz);
+        for(i=0;i<uoa[j].uoisz;++i) 
             printf("%u ", uoa[j].uoids[i]);
         putchar('\n');
     }
@@ -62,18 +64,22 @@ uoa_t *uniquelens(int *v, int vsz, int *uoasz_)
     unsigned i, j;
     unsigned uoabuf=GBUF;
     int uoasz=0;
-    uoa_t *uoa=calloc(uoabuf, sizeof(uoa_t));
+    uoa_t *uoa=malloc(uoabuf*sizeof(uoa_t));
     for(i=0;i<uoabuf;++i) {
         uoa[i].uoibf=GBUF;
-        uoa[i].uoids=malloc(uoa[i].uoibf*sizeof(unsigned));
+        uoa[i].uoids=malloc(uoa[i].uoibf*sizeof(int));
         uoa[i].uoisz=0;
+        uoa[i].uo=-1; // intialiazed, albeit to an invlid index type.
     }
 
     for(i=0; i<vsz;++i) {
         new=1;
         for(j=0; j<uoasz;++j) {
             if(uoa[j].uo == v[i]) {
-                CONDREALLOC(uoa[j].uoisz, uoa[j].uoibf, GBUF, uoa[j].uoids, unsigned);
+                CONDREALLOC(uoa[j].uoisz, uoa[j].uoibf, GBUF, uoa[j].uoids, int);
+#ifdef DBG
+                printf("APPENDING uoaind %i (ou=%i) @sz %i @buf %i adding vind %i\n", j, v[i], uoa[j].uoisz, uoa[j].uoibf, i);
+#endif
                 uoa[j].uoids[uoa[j].uoisz] = i;
                 uoa[j].uoisz++;
                 new=0;
@@ -83,19 +89,26 @@ uoa_t *uniquelens(int *v, int vsz, int *uoasz_)
         if(new) {
             uoasz++;
             CONDREALLOC2(uoasz, uoabuf, GBUF, uoa);
+#ifdef DBG
+                printf("NEW uoaind %i (ou=%i) @sz %i @buf %i adding vind %i\n", j, v[i], uoa[j].uoisz, uoa[j].uoibf, i);
+#endif
             uoa[uoasz-1].uo = v[i];
-            uoa[uoasz-1].uoisz = 1;
-            // uoa[uoasz-1].uoids=realloc(uoa[j].uoids, uoa[j].uoisz*sizeof(unsigned));
+            uoa[uoasz-1].uoisz++;
             uoa[uoasz-1].uoids[uoa[j].uoisz-1] = i;
+            // uoa[uoasz-1].uoids=realloc(uoa[j].uoids, uoa[j].uoisz*sizeof(unsigned));
         }
     }
-    for(i=uoasz;i<uoabuf;++i) 
+
+    // normalizing
+    for(i=uoasz;i<uoabuf;++i) {
         free(uoa[i].uoids);
+        // free(uoa[i]);
+    }
     uoa=realloc(uoa, uoasz*sizeof(uoa_t));
 
-    qsort(uoa, uoasz, sizeof(uoa_t), cmpuoabyo);
+    // qsort(uoa, uoasz, sizeof(uoa_t), cmpuoabyo);
 #ifdef DBG
-    printf("number of different sequence lengths: %i\n", uoasz);
+    printf("number of different values: %i\n", uoasz);
     for(j=0; j<uoasz;++j) {
         printf("%i (%u): ", uoa[j].uo, uoa[j].uoisz);
         for(i=0;i<uoa[j].uoisz;++i) 
@@ -120,24 +133,31 @@ int main(int argc, char *argv[])
         prtusage(argv[0]);
         exit(EXIT_FAILURE);
     }
+    int i;
 
-    int i, vsz=(int)(MAXVSZ*(float)random()/RAND_MAX);
+    int vsz=(int)(MAXVSZ*(float)random()/RAND_MAX); // what will be the size of our integer vector (up to a certain max)?
     int *v=malloc(vsz*sizeof(int));
     for(i=0;i<vsz;++i) 
-        v[i] = (int)(MAXISZ*(float)random()/RAND_MAX);
+        v[i] = (int)(MAXISZ*(float)random()/RAND_MAX); // each element a random integer (up to a certain max).
 
+    // let's see what we got:
+    printf("Indices: "); 
     for(i=0;i<vsz; ++i) 
-        printf("%i ", v[i]);
+        printf("%3i ", i);
+    putchar('\n');
+    printf(" Values: "); 
+    for(i=0;i<vsz; ++i) 
+        printf("%3i ", v[i]);
     putchar('\n');
 
     int uoasz;
-    uoa_t *uoc = uniquelens(v, vsz, &uoasz);
+    uoa_t *uoa = uniquelens(v, vsz, &uoasz);
     printf("uoasz = %i \n", uoasz); 
-    prtuoa(uoc, uoasz);
+    prtuoa(uoa, uoasz);
 
     for(i=0;i<uoasz;++i)
-        free(uoc[i].uoids);
-    free(uoc);
+        free(uoa[i].uoids);
+    free(uoa);
 
     free(v);
     return 0;
