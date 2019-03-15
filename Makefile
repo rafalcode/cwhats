@@ -3,7 +3,11 @@ CFLAGS=-g -Wall
 SPECLIBS=
 BZLIBS=-lbz2
 
-EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 given of stc dst2 rea0 recu0 recu1 recu2 recukmr rek0 reksyll0 ti0 fread0 ssl0 cha0 pread0 pread2 poi0 aownsa aownsai freaflo genfaa sscanflo bit4b uov0
+EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 given of stc dst2 rea0 recu0 recu1 recu2 recukmr rek0 reksyll0 ti0 fread0 ssl0 cha0 pread0 pread2 poi0 aownsa aownsai freaflo genfaa sscanflo bit4b uov0 avec
+
+# HOw to fill a character array,
+fillc: fillc.c
+	${CC} ${CFLAGS} -o $@ $^
 
 isqrt: isqrt.c
 	${CC} ${CFLAGS} -o $@ $^
@@ -91,7 +95,11 @@ tok0: tok0.c
 binrd0: binrd0.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
 
+# Unsure what fg0 is 
 fg0: fg0.c
+	${CC} ${CFLAGS} -o $@ $^ -lm
+# But used it for avec ... arbitrary integer vector builder, with its own container.
+avec: avec.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
 
 rea0: rea0.c

@@ -29,8 +29,7 @@ There was a number of function here that I have already coded elsewhere ... and 
 but they didn't come up (especialy the codon code from Uppsala), and it was easier to code from zero.
 
 ## recukmer.c
-Recusion is a key aspect of computing, but being attached to the imperative style of programming, I don't use it much.
-But the generation of kmers it turned out to be an ideal approach as it allows arbitrary embedded of for loops inside each other.
+Recursion is a key aspect of computing, but being attached to the imperative style of programming, I don't use it much.  But the generation of kmers it turned out to be an ideal approach as it allows arbitrary embedded of for loops inside each other.
 The python version is handled very easily, while the c version requires more work.
 
 However one or two notes about recursion are in order. 
@@ -42,5 +41,12 @@ However one or two notes about recursion are in order.
 * most of the c progam is recording the progress of the recursion tree by storing intermediate results properly in an array
 
 ## aownsa.c
-Quite an interesting exercise that I hadn't thought of before. THis program works on the simplest implementation
+"Array OWNS Array". Quite an interesting exercise that I hadn't thought of before. THis program works on the simplest implementation
 where with have an owning array, later called parent array with a limited number of elements, in this case floating point values between 0 and 1, generated randomly. We want to be able to take a second, and bigger array of the same type which can be called a child array and allocate its elements to the elements of the first array based on distance to the nearest element.
+
+Returning to this, some explanation is needed. IrnN any case "parent" array is better than owning array, and child array for the subordinate array. THis nomenclature is actually used internally.
+
+But dynmax is really pretty incomprehensible. The name, for a start. It seems to render the so called nodes into
+integers, but then was possible is that two nodes can fall on the same integer in the parent array, which is not really part of the user-case.
+
+However, that can be worked out OK
