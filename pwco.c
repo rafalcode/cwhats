@@ -1,4 +1,4 @@
-/* make a pairwise comparison table .. list out a table
+/* make a pairwise comparison table (PWCT) .. list out a table
  * where the index of the row represents the first of the pair, and each member of the row represents
  * the indices of the original sequence that they are compared with */
 #include <stdio.h>

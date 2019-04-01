@@ -143,7 +143,17 @@ int main(int argc, char *argv[])
     int sum=0;
     int nparents=0;
 
-    printf("Elements of first parent array, each with its list of elements in child array which they \"own\":\n\n");
+    // printf("Elements of first parent array, each with its list of elements in child array which they \"own\":\n\n");
+    printf("Parent array is as follows:\n");
+    for(i=0;i<n;++i) 
+        printf("%li ", arr1[i]);
+    printf("\nChild array is as follows:\n");
+    for(i=0;i<m;++i) 
+        printf("%li ", arr2[i]);
+    putchar('\n');
+    putchar('\n');
+    printf("Ownership calculation:\n"); 
+
     // first element
     if(!opstru.nflag) {
         if(oarr1[0] != -1)

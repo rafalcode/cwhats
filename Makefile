@@ -1,9 +1,11 @@
 CC=gcc
 CFLAGS=-g -Wall
+DBGCFLAGS=-g -Wall -DDBG
 SPECLIBS=
 BZLIBS=-lbz2
 
-EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 given of stc dst2 rea0 recu0 recu1 recu2 recukmr rek0 reksyll0 ti0 fread0 ssl0 cha0 pread0 pread2 poi0 aownsa aownsai freaflo genfaa sscanflo bit4b uov0 avec
+EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 tokargs given of stc dst2 rea0 recu0 recu1 recu2 recukmr rek0 reksyll0 ti0 fread0 ssl0 cha0 pread0 pread2 poi0 aownsa aownsai freaflo genfaa sscanflo bit4b uov0 uov2 avec
+#Note if you're looking for the occurence coutner in here, forget it, it has its own repo in "juegooca"
 
 # HOw to fill a character array,
 fillc: fillc.c
@@ -90,7 +92,10 @@ minlog10: minlog10.c
 
 # using strtok (never use string literals liek so: chr *s="mymistake"; rather use char s[]="mymistake";
 tok0: tok0.c
-	${CC} ${CFLAGS} -o $@ $^ -lm
+	${CC} ${CFLAGS} -o $@ $^
+tokargs: tokargs.c
+	${CC} ${CFLAGS} -o $@ $^
+
 
 binrd0: binrd0.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
@@ -183,6 +188,8 @@ uov0: uov0.c
 	${CC} ${CFLAGS} -o $@ $^
 uov2: uov2.c
 	${CC} ${CFLAGS} -o $@ $^
+uov2_d: uov2.c
+	${CC} ${DBGCFLAGS} -o $@ $^
 
 .PHONY: clean
 
