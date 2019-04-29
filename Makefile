@@ -4,7 +4,10 @@ DBGCFLAGS=-g -Wall -DDBG
 SPECLIBS=
 BZLIBS=-lbz2
 
-EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 tokargs given of stc dst2 rea0 recu0 recu1 recu2 recukmr rek0 reksyll0 ti0 fread0 ssl0 cha0 pread0 pread2 poi0 aownsa aownsai freaflo genfaa sscanflo bit4b uov0 uov2 avec discgam
+
+# looking for uov? chekc the juegoca repository
+
+EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 tokargs given of stc dst2 rea0 recu0 recu1 recu2 recukmr rek0 reksyll0 ti0 fread0 ssl0 cha0 pread0 pread2 poi0 aownsa aownsai freaflo genfaa sscanflo bit4b uov0 uov2 avec discgam avec2
 
 #Note if you're looking for the occurence coutner in here, forget it, it has its own repo in "juegooca"
 
@@ -107,6 +110,9 @@ fg0: fg0.c
 # But used it for avec ... arbitrary integer vector builder, with its own container.
 avec: avec.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
+avec2: avec2.c
+	${CC} ${CFLAGS} -o $@ $^
+
 
 rea0: rea0.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
