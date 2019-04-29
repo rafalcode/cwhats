@@ -51,19 +51,13 @@ void free_avc(av_c *avc)
     return;
 }
 
-int main(int argc, char *argv[])
+void coumemb(av_c *avc, int *ia, int iasz)
 {
 
     int i, k;
     unsigned char new;
 
-    int *ia= malloc(12*sizeof(int));
-    for(i=0;i<12;++i) 
-        ia[i]=(int)(4*(float)rand()/RAND_MAX);
-
-    av_c *avc=crea_avc(GBUF);
-
-    for(i=0;i<12;++i) {
+    for(i=0;i<iasz;++i) {
         new=1;
         for(k=0; k<avc->vsz;++k) {
             if(avc->v[k] == ia[i]) {
@@ -78,6 +72,23 @@ int main(int argc, char *argv[])
             avc->vc[avc->vsz++]++;
         }
     }
+
+    return;
+}
+
+int main(int argc, char *argv[])
+{
+
+    int i;
+
+    int *ia= malloc(12*sizeof(int));
+    for(i=0;i<12;++i) 
+        ia[i]=(int)(4*(float)rand()/RAND_MAX);
+
+    av_c *avc=crea_avc(GBUF);
+
+    coumemb(avc, ia, 12);
+
     norm_avc(avc);
 
     printf("Print the random integer vector:\n"); 
