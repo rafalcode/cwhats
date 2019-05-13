@@ -21,13 +21,13 @@ void procchunk(unsigned char *ind, int nsamps, int nby)
             // printf("%x: ", x); 
             switch(x) {
                 case 0x00:
-                    putchar('H'); break; // homozygous on ref/ancest
+                    putchar('h'); break; // homozygous on alt/mutant (this is plink's A1, yes).
                 case 0x03:
-                    putchar('h'); break; // homo zygous on alt
+                    putchar('H'); break; // homozygous on ref/ancestral.
                 case 0x01:
                     putchar('0'); break; // homozygous on ref/ancest
                 case 0x02:
-                    putchar('T'); // hetzyg
+                    putchar('T'); // hetzyg, unphased.
             }
             putchar(' ');
             loopc++;
