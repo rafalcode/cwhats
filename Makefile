@@ -7,7 +7,7 @@ BZLIBS=-lbz2
 
 # looking for uov? chekc the juegoca repository
 
-EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 tokargs given of stc dst2 rea0 recu0 recu1 recu2 recukmr rek0 reksyll0 ti0 fread0 ssl0 cha0 pread0 pread2 poi0 aownsa aownsai freaflo genfaa sscanflo bit4b uov0 uov2 avec discgam avec2 binrd2 updo updo2 mesf ssca0 icp crp0
+EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 tokargs given of stc dst2 rea0 recu0 recu1 recu2 recukmr rek0 reksyll0 ti0 fread0 ssl0 cha0 pread0 pread2 poi0 aownsa aownsai freaflo genfaa sscanflo bit4b uov0 uov2 avec discgam avec2 binrd2 updo updo2 mesf ssca0 icp crp0 crp0_d
 
 #Note if you're looking for the occurence coutner in here, forget it, it has its own repo in "juegooca"
 
@@ -223,8 +223,10 @@ updo2: updo2.c
 	${CC} ${DBGCFLAGS} -o $@ $^ -lm
 
 # going over my chinese resto process it's very overwrought.
-# it defintely ned not be that hard.
+# it definitely need not be that hard. Try it on a simple array
 crp0: crp0.c
+	${CC} ${CFLAGS} -o $@ $^ -lm
+crp0_d: crp0.c
 	${CC} ${DBGCFLAGS} -o $@ $^ -lm
 
 .PHONY: clean
