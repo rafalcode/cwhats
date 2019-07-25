@@ -2,7 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define GBUF 5
+#define GBUF 2
+#define MAXTAB 5
 #define CONDREALLOC(x, b, c, a1, a2, t1, t2); \
     if((x)>=((b)-1)) { \
         (b) += (c); \
@@ -49,7 +50,7 @@ void probme2(void)
     char found;
     int ncusts=0;
 
-    while(asz<4) {
+    do {
         tsum=1;
         for(i=1;i<asz;++i) 
             tsum += a[i];
@@ -86,11 +87,20 @@ void probme2(void)
 #endif
         }
         ncusts++;
-    }
+    } while(asz<MAXTAB);
 
-    printf("Numtables:%i\n", asz); 
+    // final state needs someextra work:
+    tsum=1;
+    for(i=1;i<asz;++i) 
+        tsum += a[i];
+    af[0]=1.0/tsum;
+    for(i=1;i<asz;++i) 
+        af[i]=af[i-1]+(float)a[i]/tsum;
+
+    // print out final state
+    printf("Final state: numtables:%i\n", asz); 
     for(i=0;i<asz;++i)
-        printf("tab%i:cust%i:prob%4.4f ", i, a[i], (i==0)?af[i]:af[i]-af[i-1]); 
+        printf("tab%i:#custs%i:prob%4.4f ", i, a[i], (i==0)?af[i]:af[i]-af[i-1]); 
     printf("\n"); 
 
     free(a);
