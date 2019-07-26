@@ -5,7 +5,7 @@
 #define GBUF 2
 #define MAXTAB 5
 #define MAXCPT 10 // max customers per table
-#define TOTCUSTS 100 // total customers to process
+#define TOTCUSTS 132 // total customers to process
 #define CONDREALLOC(x, b, c, a, t); \
     if((x)>=((b)-1)) { \
         (b) += (c); \
@@ -23,8 +23,9 @@
         (a1)=realloc((a1), (b)*sizeof(t1)); \
         (a2)=realloc((a2), (b)*sizeof(t2)); \
         (a3)=realloc((a3), (b)*sizeof(t3)); \
-        memset((a3), 1, (b)*sizeof(t3)); \
+        memset(((a3)+(b)-(c)), 1, (c)*sizeof(t3)); \
     }
+// had to craft that memset up there carefully
 
 typedef struct
 {
@@ -195,7 +196,7 @@ void probme3(void) /* version with mask */
                 printf("%4.4f ", af[i]); 
 #endif
         for(i=0;i<asz;++i) {
-            if(!topen)
+            if(!topen[i])
                 continue;
             if(pn<af[i]) {
                 choseni=i;
@@ -215,7 +216,7 @@ void probme3(void) /* version with mask */
             CONDREALLOC3(asz, gbuf, GBUF, a, af, topen, int, float, unsigned char);
             a[asz-1]=1;
 #ifdef DBG
-            printf("- 1cust for new table %i\n", asz-1); 
+            printf("- NEW TABLE %i! its first customer is #%i\n", asz-1, ncusts); 
 #endif
         }
         ncusts++;
@@ -230,15 +231,26 @@ void probme3(void) /* version with mask */
     // final state needs someextra work:
     tsum=1;
     for(i=1;i<asz;++i) 
-        tsum += a[i];
+        if(topen[i])
+            tsum += a[i];
     af[0]=1.0/tsum;
-    for(i=1;i<asz;++i) 
-        af[i]=af[i-1]+(float)a[i]/tsum;
+    tf=af[0];
+    for(i=1;i<asz;++i) {
+        if(topen[i]) {
+            af[i]=tf+(float)a[i]/tsum;
+            tf=af[i];
+        }
+    }
 
     // print out final state
-    printf("Final state: numtables:%i\n", asz); 
+    printf("Final state: numtables:%i\nOPEN: ", asz); 
     for(i=0;i<asz;++i)
-        printf("tab%i:#custs%i:prob%4.4f ", i, a[i], (i==0)?af[i]:af[i]-af[i-1]); 
+        if(topen[i])
+            printf("T_%i:#custs%i:prob%4.4f ", i, a[i], (i==0)?af[i]:af[i]-af[i-1]); 
+    printf("\nCLOSED: "); 
+    for(i=0;i<asz;++i)
+        if(!topen[i])
+            printf("T_%i:#custs%i ", i, a[i]);
     printf("\n"); 
 
     free(a);
