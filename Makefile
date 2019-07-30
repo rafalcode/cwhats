@@ -6,7 +6,7 @@ BZLIBS=-lbz2
 
 # looking for uov? chekc the juegoca repository
 
-EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 tokargs given of stc dst2 rea0 recu0 recu1 recu2 recukmr rek0 reksyll0 ti0 fread0 ssl0 cha0 pread0 pread2 poi0 aownsa aownsai freaflo genfaa sscanflo bit4b uov0 uov2 avec discgam avec2 binrd2 updo updo2 mesf ssca0 icp crp0 crp0_d crp2 crp2_d apa phox0
+EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 tokargs given of stc dst2 rea0 recu0 recu1 recu2 recukmr rek0 reksyll0 ti0 fread0 ssl0 cha0 pread0 pread2 poi0 aownsa aownsai freaflo genfaa sscanflo bit4b uov0 uov2 avec discgam avec2 binrd2 updo updo2 mesf ssca0 icp crp0 crp0_d crp2 crp2_d apa phox0 qccmp0 qccmp
 
 #Note if you're looking for the occurence coutner in here, forget it, it has its own repo in "juegooca"
 
@@ -19,6 +19,15 @@ ssca0: ssca0.c
 
 # memset with floats .. a hack
 mesf: mesf.c
+	${CC} ${CFLAGS} -o $@ $^
+
+# Quick char comp (instead of strcmp)
+# zero is the proto
+# this will be faster than strcmp is the strings are short.
+# Apparently under 17 chars is small in this case (credit Carmack)
+qccmp0: qccmp0.c
+	${CC} ${CFLAGS} -o $@ $^
+qccmp: qccmp.c
 	${CC} ${CFLAGS} -o $@ $^
 
 isqrt: isqrt.c
