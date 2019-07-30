@@ -2,7 +2,8 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-#define qccomp(s1, s2, r); \
+// workable macro but overwrites the string pointer!
+#define qccomp0(s1, s2, r); \
     *(r)=0; \
     while((*(s1)) && (*(s2))) \
         if(*(s1)++ != *(s2)++) \
@@ -10,6 +11,31 @@
     if((*(s1)) || (*(s2))) \
         *(r)=1;
 
+// the macro proper: it does not overwrite the string as it advances!
+#define qccomp(s1, s2, r); \
+    *(r)=0; \
+    char *ss1=(s1); \
+    char *ss2=(s2); \
+    while((*(ss1)) && (*(ss2))) \
+        if(*(ss1)++ != *(ss2)++) \
+            *(r)=1; \
+    if((*(ss1)) || (*(ss2))) \
+        *(r)=1;
+
+// an alternative when you know lengths
+#define qccomp2(s1, s2, l1, l2, r); \
+    *(r)=0; \
+    int ll; \
+    if((l1) != (l2)) { \
+        *(r)=1; \
+    } else { \
+        ll=l1; \
+        do { \
+            if((s1)[l1-ll] != (s2)[l1-ll]) \
+                *(r)=1; \
+            ll--; \
+        } while(ll); \
+    }
 int qccmp(char *s1, char *s2)
 {
     while((*s1) && (*s2))
