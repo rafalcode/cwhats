@@ -2,6 +2,14 @@
 #include<stdio.h>
 #include<stdlib.h>
 
+#define qccomp(s1, s2, r); \
+    *(r)=0; \
+    while((*(s1)) && (*(s2))) \
+        if(*(s1)++ != *(s2)++) \
+            *(r)=1; \
+    if((*(s1)) || (*(s2))) \
+        *(r)=1;
+
 int qccmp(char *s1, char *s2)
 {
     while((*s1) && (*s2))
@@ -23,6 +31,15 @@ int main(int argc, char *argv[])
     }
 
     if(!qccmp(argv[1], argv[2]))
+        printf("Strings are the exact same.\n");
+    else
+        printf("There's a difference in the strings.\n");
+
+    printf("Now use the qccomp macro\n"); 
+
+    int r;
+    qccomp(argv[1], argv[2], &r);
+    if(!r)
         printf("Strings are the exact same.\n");
     else
         printf("There's a difference in the strings.\n");
