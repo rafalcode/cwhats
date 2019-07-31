@@ -73,13 +73,13 @@ void shufflevec(av_c *avc)
 
     int r, ti;
     float rf;
-    for(i=avc->vsz-1;i>=0;--i) {
+    for(i=avc->vsz-1;i>0;--i) {
+        // no need to do final index.
         rf=(float)rand()/RAND_MAX;
         r=(int)((i+1)*rf);
 #ifdef DBG
-        printf("%i:%4.4f:%i: ", i, rf, r); 
+        printf("IT%i/RF%4.4f/IX%i: ", i, rf, r); 
 #endif
-        prtavecdbg(avc);
         ti=avc->v[i];
         avc->v[i]=avc->v[r];
         avc->v[r] = ti;
@@ -106,13 +106,11 @@ int main(int argc, char *argv[])
 
     for(i=0;i<sz;++i) {
         condrea_avc(avc);
-        avc->v[avc->vsz++]=i;
+        avc->v[avc->vsz++]=10+i;
     }
     norm_avc(avc);
 
-#ifndef DBG
     prtavec(avc);
-#endif
 
     shufflevec(avc);
 
