@@ -50,3 +50,6 @@ But dynmax is really pretty incomprehensible. The name, for a start. It seems to
 integers, but then was possible is that two nodes can fall on the same integer in the parent array, which is not really part of the user-case.
 
 However, that can be worked out OK
+
+## qccmp.c
+A quick string comparator when strings are short (<17chars)
