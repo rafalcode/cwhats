@@ -9,16 +9,28 @@
 #define OFFSET 1
 
 typedef unsigned char boole;
-typedef struct
+typedef struct // cartpos
 {
 	float x,y;
 } cartpos;  /* a cartesian position, to lend reality. */
 
-typedef struct
-{
-    int i,j;
+typedef struct { // ptdst point-distance
+    int x, y;
     float d;
 } ptdst; // point distances.
+
+int cmppdst(const void *ipd1, const void *ipd2)
+{
+    ptdst *pd1 = (ptdst*)ipd1;
+    ptdst *pd2 = (ptdst*)ipd2;
+
+    if(pd1->d > pd2->d)
+        return 1;
+    else if(pd1->d < pd2->d)
+        return -1;
+    else
+        return 0;
+}
 
 int main(int argc, char *argv[])
 {
@@ -43,7 +55,6 @@ int main(int argc, char *argv[])
     int npwc=n*(n-1)/2; // well known, from the maths.
 
     /* We're going to create a holder for the 1to1 relationships.*/
-    float *pwa=calloc(npwc, sizeof(float));
     ptdst *pwa=malloc(npwc*sizeof(ptdst));
     int nr=n-1; // number of rows our pairwise comp table will have
     int nc=n-1;
@@ -57,7 +68,7 @@ int main(int argc, char *argv[])
             pwa[mi+j].d=sqrt(pow((na[i].x-na[i+j+1].x), 2)+pow((na[i].y-na[i+j+1].y), 2));
             pwa[mi+j].x = i;
             pwa[mi+j].y = i+j+1;
-            printf("p%d/%d.vs.%d=%2.4f ", mi+j, i, i+j+1, pwa[mi+j].d);
+            printf("p%d/%d.vs.%d=%2.4f ", mi+j, pwa[mi+j].x, pwa[mi+j].y, pwa[mi+j].d);
         }
         printf("\n"); 
         mi+=n-i-1; // cumulative start position for the column run.
@@ -78,31 +89,19 @@ int main(int argc, char *argv[])
             for(kk=0;kk<7;++kk) 
                 putchar(' '); // filler
         for(j=0;j<mj;++j) {
-            printf("%2.4f ", pwa[mi+j]);
+            printf("%2.4f ", pwa[mi+j].d);
         }
         printf("\n"); 
         mi+=n-i-1; // cumulative start position for the column run.
     }
 
-    /* now render a square matrix out of the pwa: nope just uses the members matrix. */
-    mi=0;
-    float *ma=calloc(n*n,sizeof(float));
-    int m;
-    for(i=0;i<nr;++i) {
-        mj=nc-i; // gradually decreasing extent of the column run
-        m=(nr+1)*i;
-        for(j=0;j<mj;++j) {
-            printf("%i:%i ", m+i+j+1, i+j+1);
-            // ma[m+i+j+1]=na[i+j+1]; // if direct from na
-            ma[m+i+j+1]=pwa[mi+j];
-        }
-        printf("\n");
-        mi+=n-i-1; // cumulative start position for the column run.
-    }
-    printf("\n");
+    qsort(pwa, npwc, sizeof(ptdst), cmppdst);
+
+    for(i=0;i<npwc;++i) 
+        printf("%d:%d=%2.4f ", pwa[i].x, pwa[i].y, pwa[i].d); 
+    printf("\n"); 
 
     free(na);
     free(pwa);
-    free(ma);
     return 0;
 }
