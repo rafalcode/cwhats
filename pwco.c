@@ -71,6 +71,28 @@ int main(int argc, char *argv[])
         mi+=n-i-1; // cumulative start position for the column run.
     }
 
+    printf("Pretty print of pwa:\n"); 
+    j=0;
+    mi=0;
+    int k, kk;
+    printf("FROM:/TO: "); 
+    for(i=1;i<n;++i)
+        printf("p_%d    ", i); 
+    printf("\n");
+    for(i=0;i<nr;++i) {
+        mj=nc-i; // gradually decreasing extent of the column run
+        printf("p_%d:    ", i);
+        // printf("p%d/%d.vs.%d: ", mi+j, i, i+j+1);
+        for(k=0;k<i;++k) 
+            for(kk=0;kk<7;++kk) 
+                putchar(' '); // filler
+        for(j=0;j<mj;++j) {
+            printf("%2.4f ", pwa[mi+j]);
+        }
+        printf("\n"); 
+        mi+=n-i-1; // cumulative start position for the column run.
+    }
+
     /* now render a square matrix out of the pwa: nope just uses the members matrix. */
     mi=0;
     float *ma=calloc(n*n,sizeof(float));
@@ -83,6 +105,7 @@ int main(int argc, char *argv[])
             // ma[m+i+j+1]=na[i+j+1]; // if direct from na
             ma[m+i+j+1]=pwa[mi+j];
         }
+        printf("\n");
         mi+=n-i-1; // cumulative start position for the column run.
         // mi+=n; // Some sort of alternative
     }
