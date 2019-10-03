@@ -46,17 +46,58 @@ void free_avc(av_c *avc)
     return;
 }
 
-int main(int argc, char *argv[])
+void prtavec(av_c *avc)
 {
-    if(argc<2) {
-        printf("One arg: a string with underscores.\n");
-        exit(EXIT_FAILURE);
-    }
-    char *c=argv[1];
-    int i, cou;
+    int i;
+    for(i=0;i<avc->vsz;++i)
+        printf("%i ", avc->v[i]); 
+    printf("\n"); 
+    return;
+}
 
+void prtavecn(char *c, av_c *avc)
+{
+    int i, j;
+    // before the first token
+    for(i=0;i<avc->v[0];++i)
+        putchar(c[i]);
+    putchar('\n');
+    for(i=1;i<avc->vsz;++i) {
+        for(j=avc->v[i-1]+1;j<avc->v[i];++j) 
+            putchar(c[j]);
+        putchar('\n');
+    }
+    char *tc=c + avc->v[avc->vsz-1]+1;
+    while(*tc) {
+        putchar(*tc);
+        tc++;
+    }
+    putchar('\n');
+    return;
+}
+
+void prtavecnd(char *ca, av_c *avc) /* a debug version */
+{
+    int i, j;
+    char *c=ca;
+    printf("chars %i to %i: ", 0, avc->v[0]-1);
+    for(i=0;i<avc->v[0];++i)
+        putchar(c[i]);
+    putchar('\n');
+
+    for(i=1;i<avc->vsz;++i) {
+        printf("chars %i to %i: ", avc->v[i-1]+1, avc->v[i]-1);
+        for(j=avc->v[i-1]+1;j<avc->v[i];++j) 
+            putchar(c[j]);
+        putchar('\n');
+    }
+    return;
+}
+
+av_c *avget(char *c)
+{
     av_c *avc=crea_avc(GBUF);
-    cou=0;
+    int cou=0;
     while(c[cou]) {
         if(c[cou]=='_') {
             condrea_avc(avc);
@@ -64,12 +105,25 @@ int main(int argc, char *argv[])
         }
         cou++;
     }
+    // somewhat stealthily, we also add the position of the final \0.
+    avc->v[avc->vsz++]=cou;
     norm_avc(avc);
 
-    printf("Avec printed out:\n"); 
-    for(i=0;i<avc->vsz;++i)
-        printf("%i ", avc->v[i]); 
-    printf("\n"); 
+    return avc;
+}
+
+int main(int argc, char *argv[])
+{
+    if(argc<2) {
+        printf("One arg: a string with underscores.\n");
+        exit(EXIT_FAILURE);
+    }
+    char *c=argv[1];
+
+    av_c *avc=avget(c);
+    prtavec(avc);
+    // prtavecn(c, avc);
+    prtavecnd(c, avc);
 
     free_avc(avc);
 
