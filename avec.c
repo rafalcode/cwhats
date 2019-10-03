@@ -1,5 +1,5 @@
 /* how to build up an integer vector of arbitrary size 
-Note how we use a container for the vector. Sure it involves some extra functions */
+Note how we use a container for the vector. Sure, it involves some extra functions */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,7 +11,7 @@ Note how we use a container for the vector. Sure it involves some extra function
         (a)=realloc((a), (b)*sizeof(t)); \
     }
 
-typedef struct
+typedef struct /* av_c */
 {
     int vbf, vsz, *v;
 } av_c;
