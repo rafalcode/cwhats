@@ -263,6 +263,11 @@ phox0: phox0.c
 hwplay0: hwplay0.c
 	${CC} ${DBGCFLAGS} -o $@ $^ -lm
 
+# You have a bunch of names and want to check them out
+# particularly sample names, many thousands of them
+namerd: namerd.c
+	${CC} ${CFLAGS} -o $@ $^
+
 .PHONY: clean
 
 clean:
