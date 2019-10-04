@@ -6,7 +6,7 @@ BZLIBS=-lbz2
 
 # looking for uov? chekc the juegoca repository
 
-EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco pwco2 mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 tokargs given of stc dst2 rea0 recu0 recu1 recu2 recukmr rek0 reksyll0 ti0 fread0 ssl0 cha0 pread0 pread2 poi0 aownsa aownsai freaflo genfaa sscanflo bit4b uov0 uov2 avec discgam avec2 binrd2 updo updo2 mesf ssca0 icp crp0 crp0_d crp2 crp2_d apa phox0 qccmp0 qccmp durstp durstp_d hwplay i2
+EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco pwco2 pwco3 mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 tokargs given of stc dst2 rea0 recu0 recu1 recu2 recukmr rek0 reksyll0 ti0 fread0 ssl0 cha0 pread0 pread2 poi0 aownsa aownsai freaflo genfaa sscanflo bit4b uov0 uov2 avec discgam avec2 avecn binrd2 updo updo2 mesf ssca0 icp crp0 crp0_d crp2 crp2_d apa phox0 qccmp0 qccmp durstp durstp_d hwplay i2 pffc
 
 #Note if you're looking for the occurence coutner in here, forget it, it has its own repo in "juegooca"
 
@@ -15,6 +15,8 @@ fillc: fillc.c
 	${CC} ${CFLAGS} -o $@ $^
 
 i2: i2.c
+	${CC} ${CFLAGS} -o $@ $^
+pffc: pffc.c
 	${CC} ${CFLAGS} -o $@ $^
 
 ssca0: ssca0.c
@@ -86,6 +88,9 @@ pwco: pwco.c
 # more sophisticated
 pwco2: pwco2.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
+# even more, when I realised the calculations could be used for cluster analysis
+pwco3: pwco3.c
+	${CC} ${CFLAGS} -o $@ $^ -lm
 
 # pairwise comparison able, simplest possible idea ... turne out to be a bit thorny.
 passing0: passing0.c
@@ -135,8 +140,13 @@ fg0: fg0.c
 # But used it for avec ... arbitrary integer vector builder, with its own container.
 avec: avec.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
+# avec2 really looks like a uovo (juegooca) ...
 avec2: avec2.c
 	${CC} ${CFLAGS} -o $@ $^
+	# avec on a names .. i.e. a string: why? to count and give positions of a certain character .. say underscore!
+avecn: avecn.c
+	${CC} ${CFLAGS} -o $@ $^
+# use avec as spring board for permutations using durstmann method?
 durstp: durstp.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
 durstp_d: durstp.c
