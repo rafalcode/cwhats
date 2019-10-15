@@ -337,6 +337,50 @@ void prtaawcplain2(aaw_c *aawc, int acsz)
     }
 }
 
+void prtaawcexc(aaw_c *aawc, int acsz)
+{
+    int i, j;
+    int all1;
+    printf("Sample names in file 1 which are never found in all other files.\n"); 
+    for(i=0;i<aawc->numl;++i) {
+        all1=0;
+        for(j=0;j<acsz;++j)
+            if(aawc->aaw[i]->ac[j]) {
+                all1=1;
+                break;
+            }
+
+        if(all1)
+            continue;
+        // will only print if sample is not in any of the other files
+        printf("L)%u(%uw):", i, aawc->aaw[i]->al); 
+        for(j=0;j<aawc->aaw[i]->al;++j)
+            printf((j!=aawc->aaw[i]->al-1)?"%s\\":"%s\n", aawc->aaw[i]->aw[j]->w);
+    }
+}
+
+void prtaawc_c1(aaw_c *aawc, char **a, int acsz)
+{
+    int i, j;
+    int all0;
+    for(j=0;j<acsz+1;++j) 
+        printf((j!=acsz)?"%.*s,":"%.*s\n", (int)(strchr(a[j],'.')-a[j]), a[j]);
+
+    for(i=0;i<aawc->numl;++i) {
+        all0=1;
+        for(j=0;j<acsz;++j)
+            if(aawc->aaw[i]->ac[j]) {
+                all0=0;
+                break;
+            }
+        if(all0)
+            continue; // all zeros?, don't bother printing then.
+        printf("%s,", aawc->aaw[i]->aw[0]->w);
+        for(j=0;j<acsz;++j)
+            printf((j!=acsz-1)?"%i,":"%i\n", (int)aawc->aaw[i]->ac[j]);
+    }
+}
+
 aaw_c *processinpf1lac(char *fname, int addc) /* Process file as one line and add columns */
 {
     /* declarations */
@@ -445,6 +489,11 @@ int main(int argc, char *argv[])
 
     if(whatoutput==1) 
         prtaawcplain2(aawc, argc-3);
+    else if(whatoutput==2) 
+        prtaawcexc(aawc, argc-3);
+    else if(whatoutput==3) {
+        prtaawc_c1(aawc, argv+2, argc-3);
+    }
 
     freechainharr(ha1, htsz);
     free_aawc(&aawc);
