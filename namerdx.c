@@ -233,7 +233,7 @@ void free_wc(w_c **wc)
     return;
 }
 
-aw_c *crea_awc(unsigned initsz)
+aw_c *crea_awc(unsigned initsz, int addc)
 {
     int i;
     aw_c *awc=malloc(sizeof(aw_c));
@@ -242,6 +242,7 @@ aw_c *crea_awc(unsigned initsz)
     awc->dgrp=0;
     awc->ma2=0;
     awc->ma1=0;
+    awc->ac=calloc(addc, sizeof(boole));
     awc->al=awc->ab;
     awc->aw=malloc(awc->ab*sizeof(w_c*));
     for(i=0;i<awc->ab;++i) 
@@ -267,8 +268,9 @@ void norm_awc(aw_c **awc)
     int i;
     aw_c *tawc=*awc;
     /* free the individual w_c's */
-    for(i=tawc->al;i<tawc->ab;++i) 
+    for(i=tawc->al;i<tawc->ab;++i) {
         free_wc(tawc->aw+i);
+    }
     /* now release the pointers to those freed w_c's */
     tawc->aw=realloc(tawc->aw, tawc->al*sizeof(aw_c*));
     *awc=tawc;
@@ -279,14 +281,16 @@ void free_awc(aw_c **awc)
 {
     int i;
     aw_c *tawc=*awc;
-    for(i=0;i<tawc->al;++i) 
+    for(i=0;i<tawc->al;++i) {
         free_wc(tawc->aw+i);
+    }
     free(tawc->aw); /* unbelieveable: I left this out, couldn't find where I leaking the memory! */
+    free(tawc->ac);
     free(tawc);
     return;
 }
 
-aaw_c *crea_aawc(unsigned initsz)
+aaw_c *crea_aawc(unsigned initsz, int addc)
 {
     int i;
     unsigned lbuf=initsz;
@@ -294,7 +298,7 @@ aaw_c *crea_aawc(unsigned initsz)
     aawc->numl=0;
     aawc->aaw=malloc(lbuf*sizeof(aw_c*));
     for(i=0;i<initsz;++i) 
-        aawc->aaw[i]=crea_awc(WABUF);
+        aawc->aaw[i]=crea_awc(WABUF, addc);
     return aawc;
 }
 
@@ -318,71 +322,7 @@ void prtaawcplain(aaw_c *aawc) /* print line and word details, but not the words
     }
 }
 
-aaw_c *processinpf(char *fname)
-{
-    /* declarations */
-    FILE *fp=fopen(fname,"r");
-    int i;
-    size_t couc /*count chars per line */, couw=0 /* count words */;
-    int c, oldc='\0';
-    boole inword=0;
-    boole intitle=0;
-    unsigned lbuf=LBUF /* buffer for number of lines */, cbuf=CBUF /* char buffer for size of w_c's: reused for every word */;
-    aaw_c *aawc=crea_aawc(lbuf); /* array of words per line */
-
-    while( (c=fgetc(fp)) != EOF) {
-        if(c=='>')
-            intitle=1;
-        else if((intitle) & (oldc=='\n'))
-            intitle=0;
-        if((c==' ') & !intitle)
-            continue;
-        if( ((c==' ') & intitle) | (c=='"') | (c=='=') | (c=='|') | (c== '\n') | (c == '\t') ) {
-            if( inword==1) { /* cue word-ending procedure */
-                aawc->aaw[aawc->numl]->aw[couw]->w[couc++]='\0';
-                aawc->aaw[aawc->numl]->aw[couw]->lp1=couc;
-                norm_wc(aawc->aaw[aawc->numl]->aw+couw);
-                couw++; /* verified: this has to be here */
-            }
-            if(c=='\n') { /* cue line-ending procedure */
-                if(aawc->numl ==lbuf-1) {
-                    lbuf += LBUF;
-                    aawc->aaw=realloc(aawc->aaw, lbuf*sizeof(aw_c*));
-                    for(i=lbuf-LBUF; i<lbuf; ++i)
-                        aawc->aaw[i]=crea_awc(WABUF);
-                }
-                aawc->aaw[aawc->numl]->al=couw;
-                norm_awc(aawc->aaw+aawc->numl);
-                aawc->numl++;
-                couw=0;
-            }
-            inword=0;
-        } else if(inword==0) { /* a normal character opens word */
-            if(couw ==aawc->aaw[aawc->numl]->ab-1) /* new word opening */
-                reall_awc(aawc->aaw+aawc->numl, WABUF);
-            couc=0;
-            cbuf=CBUF;
-            aawc->aaw[aawc->numl]->aw[couw]->w[couc++]=c;
-            inword=1;
-        } else if(inword) { /* simply store */
-            if(couc == cbuf-1)
-                reall_wc(aawc->aaw[aawc->numl]->aw+couw, &cbuf);
-            aawc->aaw[aawc->numl]->aw[couw]->w[couc++]=c;
-        }
-        oldc=c;
-    } /* end of big for statement */
-    fclose(fp);
-
-    /* normalization stage */
-    for(i=aawc->numl; i<lbuf; ++i) {
-        free_awc(aawc->aaw+i);
-    }
-    aawc->aaw=realloc(aawc->aaw, aawc->numl*sizeof(aw_c*));
-
-    return aawc;
-}
-
-aaw_c *processinpf1l(char *fname)
+aaw_c *processinpf1lac(char *fname, int addc) /* Process file as one line and add columns */
 {
     /* declarations */
     FILE *fp=fopen(fname,"r");
@@ -391,7 +331,7 @@ aaw_c *processinpf1l(char *fname)
     int c;
     boole inword=0;
     unsigned lbuf=LBUF /* buffer for number of lines */, cbuf=CBUF /* char buffer for size of w_c's: reused for every word */;
-    aaw_c *aawc=crea_aawc(lbuf); /* array of words per line */
+    aaw_c *aawc=crea_aawc(lbuf, addc); /* array of words per line */
 
     while( (c=fgetc(fp)) != EOF) {
         if(c=='\n') { /* cue line-ending procedure */
@@ -405,7 +345,7 @@ aaw_c *processinpf1l(char *fname)
                 lbuf += LBUF;
                 aawc->aaw=realloc(aawc->aaw, lbuf*sizeof(aw_c*));
                 for(i=lbuf-LBUF; i<lbuf; ++i)
-                    aawc->aaw[i]=crea_awc(WABUF);
+                    aawc->aaw[i]=crea_awc(WABUF, addc);
             }
             aawc->aaw[aawc->numl]->al=couw;
             norm_awc(aawc->aaw+aawc->numl);
@@ -450,13 +390,15 @@ int main(int argc, char *argv[])
     if(argc==1)
         prtusage();
 
-    aaw_c *aawc=processinpf1l(argv[1]);
+    aaw_c *aawc=processinpf1lac(argv[1], argc-2);
     unsigned ducou;
     unsigned htsz=givehtsz(aawc->numl);
     snodm **ha1= hashnam(aawc, htsz, &ducou);
     prtchaharr(ha1, htsz);
     freechainharr(ha1, htsz);
     printf("Dups=%u\n", ducou); 
+    // aaw_c *aawc2=NULL;
+    // for(i=2;i<argc;++i) 
 
     free_aawc(&aawc);
 

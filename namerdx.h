@@ -30,6 +30,7 @@ typedef struct /* aw_c: array of words container */
     // only one of the following will be used each time, I just didn't wnat to reset.
     boole ma1; // a match with the first name file?
     boole ma2; // a match with the second name file?
+    boole *ac; /* columns to be added */
     trival dup;
     unsigned dgrp;
 } aw_c;
