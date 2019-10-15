@@ -82,7 +82,7 @@ snodm **hashnam(aaw_c *aawc, unsigned tsz, unsigned *dgcou)
     return stab;
 }
 
-void mu_nam(aaw_c *aawc, snodm **stam, unsigned tsz, trival sf /* subject file, either 1 or 2 */)
+void mu_nam(aaw_c *aawc, snodm **stam, unsigned tsz, int colj)
 {
     unsigned i;
     snodm *tsnod2;
@@ -97,10 +97,7 @@ void mu_nam(aaw_c *aawc, snodm **stam, unsigned tsz, trival sf /* subject file, 
         tsnod2=stam[tint];
         while( (tsnod2 != NULL) ) {
             if(!strcmp(tsnod2->aw->aw[0]->w, aawc->aaw[i]->aw[0]->w)) {
-                if(sf==1)
-                    aawc->aaw[i]->ma2=1;
-                else if(sf==2)
-                    aawc->aaw[i]->ma1=1;
+                tsnod2->aw->ac[colj]=1;
                 break;
             }
             tsnod2=tsnod2->n;
@@ -322,6 +319,24 @@ void prtaawcplain(aaw_c *aawc) /* print line and word details, but not the words
     }
 }
 
+void prtaawcplain2(aaw_c *aawc, int acsz)
+{
+    int i, j;
+    int all1;
+    printf("Sample names in file 1 found in all other files.\n"); 
+    for(i=0;i<aawc->numl;++i) {
+        all1=1;
+        for(j=0;j<acsz;++j)
+            if(!aawc->aaw[i]->ac[j])
+                all1=0;
+        if(!all1)
+            continue;
+        printf("L)%u(%uw):", i, aawc->aaw[i]->al); 
+        for(j=0;j<aawc->aaw[i]->al;++j)
+            printf((j!=aawc->aaw[i]->al-1)?"%s\\":"%s\n", aawc->aaw[i]->aw[j]->w);
+    }
+}
+
 aaw_c *processinpf1lac(char *fname, int addc) /* Process file as one line and add columns */
 {
     /* declarations */
@@ -394,12 +409,16 @@ int main(int argc, char *argv[])
     unsigned ducou;
     unsigned htsz=givehtsz(aawc->numl);
     snodm **ha1= hashnam(aawc, htsz, &ducou);
-    prtchaharr(ha1, htsz);
-    freechainharr(ha1, htsz);
-    printf("Dups=%u\n", ducou); 
-    // aaw_c *aawc2=NULL;
-    // for(i=2;i<argc;++i) 
+    int i;
+    aaw_c *aawc2=NULL;
+    for(i=2;i<argc;++i) {
+        aawc2=processinpf1lac(argv[i], 0);
+        mu_nam(aawc2, ha1, htsz, i-2);
+        free_aawc(&aawc2);
+    }
 
+    prtaawcplain2(aawc, argc-2);
+    freechainharr(ha1, htsz);
     free_aawc(&aawc);
 
     return 0;
