@@ -394,8 +394,13 @@ aaw_c *processinpf1lac(char *fname, int addc) /* Process file as one line and ad
 void prtusage()
 {
     printf("Program \"namerdx\" takes a series of single column name files,\n");
-    printf("And outputs an csv table with the names in the first file and columns with\n");
+    printf("And outputs only those names in the first file which are present in all others.\n");
+    // printf("And outputs an csv table with the names in the first file and columns with\n");
     printf("presence or absence in the other files\n");
+    printf("First argument must be a single switch/option, followed by first and subsequent files.\n");
+    printf("Switch -i: only Include first file names in all other files\n");
+    printf("Switch -e: Exclude first file names in all other files\n");
+    printf("Switch -c: output logical-column csv with at least 1 first file name inclusion in all other files\n");
     exit(EXIT_FAILURE);
 }
 
@@ -405,19 +410,42 @@ int main(int argc, char *argv[])
     if(argc==1)
         prtusage();
 
-    aaw_c *aawc=processinpf1lac(argv[1], argc-2);
+    if((argv[1][0] != '-') | (strlen(argv[1]) !=2) ) {
+        printf("Error: first argument must be a single character switch/option argument.\n"); 
+        printf("\n"); 
+        prtusage();
+        exit(EXIT_FAILURE);
+    }
+    int whatoutput;
+    switch(argv[1][1]) {
+        case 'i':
+            whatoutput=1; break;
+        case 'e':
+            whatoutput=2; break;
+        case 'c':
+            whatoutput=3; break;
+        default:
+            printf("Error: only one of -i, -e or -c allowed\n");
+            printf("\n"); 
+            prtusage();
+            exit(EXIT_FAILURE);
+    }
+
+    aaw_c *aawc=processinpf1lac(argv[2], argc-3);
     unsigned ducou;
     unsigned htsz=givehtsz(aawc->numl);
     snodm **ha1= hashnam(aawc, htsz, &ducou);
     int i;
     aaw_c *aawc2=NULL;
-    for(i=2;i<argc;++i) {
-        aawc2=processinpf1lac(argv[i], 0);
-        mu_nam(aawc2, ha1, htsz, i-2);
+    for(i=3;i<argc;++i) {
+        aawc2=processinpf1lac(argv[i], i-3);
+        mu_nam(aawc2, ha1, htsz, i-3);
         free_aawc(&aawc2);
     }
 
-    prtaawcplain2(aawc, argc-2);
+    if(whatoutput==1) 
+        prtaawcplain2(aawc, argc-3);
+
     freechainharr(ha1, htsz);
     free_aawc(&aawc);
 
