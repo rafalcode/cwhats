@@ -1,5 +1,6 @@
 /* an exercise in getline: this is the original example from the man pages
- * note that it does lokk quite convenient, because the line's memory need not be allocated
+ * note that getline() does look quite convenient, because the line's memory need not
+ * be explicitly allocated
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,6 +11,8 @@
     if((x)>=((b)-1)) { \
         (b) += (c); \
         (a)=realloc((a), (b)*sizeof(t)); \
+        for(i=((b)-(c));i<(b);++i) \
+            ((a)[i]) = NULL; \
     }
 
 typedef struct
@@ -39,12 +42,20 @@ int main(int argc, char *argv[])
     }
 
     int lbuf=GBUF;
-    char **aol=malloc(lbuf*sizeof(char*));
+
+    /* note we alloctae and initialize in this way, but freeing will be different:
+     * it will later have to be done individually for each pointer via  for loop */
+    char **aol=malloc(lbuf*sizeof(char*)); // does need this, yes, though later it won't be free'd
+
+    /* basically here it's like creating a series of "char *tmp;" statements,
+     * none equally NULL .. so valgrind will complain */
+    for(i=0;i<lbuf;++i) 
+        aol[i]=NULL;
 
     // test to see if initialised.
-    // for(i=0;i<lbuf;++i) 
-    //     printf("%p ", aol+i); 
-    // printf("\n"); 
+    for(i=0;i<lbuf;++i) 
+        printf("%p ", aol+i); 
+    printf("\n"); 
     int asz=0;
 
     while ((nread = getline(aol+asz, &len, stream)) != -1) {
@@ -56,12 +67,18 @@ int main(int argc, char *argv[])
         asz++;
     }
     printf("lbuf:%i asz:%i\n", lbuf, asz);
+
+    /* now to see if normalise works */
+    for(i=asz;i<lbuf;++i)
+        free(aol[i]);
     // aol=realloc(aol, asz*sizeof(char*)); // normalize
-    for(i=0;i<lbuf;++i) {
-        // free(aol[i]);
-        // free(aol+i);
-    }
-    free(aol);
+
+    /* and now to free */
+    for(i=0;i<asz;++i)
+        free(aol[i]);
+    // free(aol);
+
+    /* Ok that's it */
     fclose(stream);
     exit(EXIT_SUCCESS);
 }
