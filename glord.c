@@ -65,6 +65,8 @@ void prtusage(void)
     printf("example usage: ./glord -i m3.txt -r -b 1 -u 6 -f 2\n");
     printf("this would take line 1 to line 6 (allinclusive) of file m3.txt and render it row-wise if it were columnwise.\n");
     printf("-f is hte first dimension of the required wise-ness. In this case lines 1 to 6 would be originally 3 rows, but will turn to 2, so -f 2\n");
+    printf("Beware files with more than one range that has to be rearranged! You need to multiple passes through this program, modifying -b and -u as you go on.\n");
+    printf("example: second range of column wise8x12 section: glord -i gord.txt -r -b 97 -u 192 -f 12\n"); 
     exit(EXIT_FAILURE);
 }
 
@@ -90,6 +92,10 @@ int main(int argc, char *argv[])
         printf("Error. Line range slice %i must be cleanly divisible by the first-dimension specified as %i.\n", nclines, opstru.fdim);
         exit(EXIT_FAILURE);
     }
+#ifdef DBG
+    else
+        printf("OK. Line range slice %i is cleanly divisible by the first-dimension specified as %i.\n", nclines, opstru.fdim);
+#endif
 
     /*OK, let's turn our attention to reading the file */
     size_t len = 0;
@@ -137,6 +143,9 @@ int main(int argc, char *argv[])
 
     /* OK, now for the rearranging */
     int iext= nclines/opstru.fdim;
+#ifdef DBG
+    printf("iext=%i\n", iext); 
+#endif
 
     /* print the first un-rearranged section, if any */
     for(i=0;i<opstru.bint;++i) 
