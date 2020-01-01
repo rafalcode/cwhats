@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     // char *line = NULL;
     size_t len = 0;
     ssize_t nread=0;
-    int i;
+    int i, j;
 
     if (argc != 2) {
         fprintf(stderr, "Usage: %s <file>\n", argv[0]);
@@ -60,9 +60,6 @@ int main(int argc, char *argv[])
 
     while ((nread = getline(aol+asz, &len, stream)) != -1) {
         CONDREALLOC(asz, lbuf, GBUF, aol, char*);
-        // printf("Retrieved line of length (returned val method): %zu\n", nread);
-        // printf("Retrieved line of length (strlen method): %zu\n", strlen(line));
-        // fwrite(line, nread, 1, stdout);
         printf("%s", aol[asz]);
         asz++;
     }
@@ -71,12 +68,25 @@ int main(int argc, char *argv[])
     /* now to see if normalise works */
     for(i=asz;i<lbuf;++i)
         free(aol[i]);
-    // aol=realloc(aol, asz*sizeof(char*)); // normalize
+
+    // OK now for our analysis.
+    int gcou[2]={0,0}; // this is our group count.
+    const int xtnt=1; // the extent of our search
+    for(i=0;i<asz;++i)
+        for(j=0;j<xtnt;++j) {
+            if( (aol[i][j] >47) && (aol[i][j] <48) )
+                gcou[1]++;
+            else
+                gcou[0]++;
+        }
+
+    printf("cat1: if( (aol[i][j] >47) && (aol[i][j] <48) \n");
+    printf("Counts of cat0: %i, cat1 = %i\n", gcou[0], gcou[1]); 
 
     /* and now to free */
     for(i=0;i<asz;++i)
         free(aol[i]);
-    // free(aol);
+    free(aol);
 
     /* Ok that's it */
     fclose(stream);
