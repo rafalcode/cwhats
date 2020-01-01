@@ -2,6 +2,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
+typedef struct
+{
+    char **l;
+    int lbf;
+    int lsz;
+} larr_t;
+
 int main(int argc, char *argv[])
 {
     FILE *stream;
