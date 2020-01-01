@@ -6,7 +6,7 @@ BZLIBS=-lbz2
 
 # looking for uov? chekc the juegoca repository
 
-EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco pwco2 pwco3 mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 tokargs given of stc dst2 rea0 recu0 recu1 recu2 recukmr rek0 reksyll0 ti0 fread0 ssl0 cha0 pread0 pread2 poi0 aownsa aownsai freaflo genfaa sscanflo bit4b uov0 uov2 avec discgam avec2 avecn binrd2 updo updo2 mesf ssca0 icp crp0 crp0_d crp2 crp2_d apa phox0 qccmp0 qccmp durstp durstp_d hwplay i2 pffc usconrd po0 gl0 po1 namerd namerdx pdc ascha stst stst0 lread0 glord crwise cr0 cr1
+EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco pwco2 pwco3 mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 tokargs given of stc dst2 rea0 recu0 recu1 recu2 recukmr rek0 reksyll0 ti0 fread0 ssl0 cha0 pread0 pread2 poi0 aownsa aownsai freaflo genfaa sscanflo bit4b uov0 uov2 avec discgam avec2 avecn binrd2 updo updo2 mesf ssca0 icp crp0 crp0_d crp2 crp2_d apa phox0 qccmp0 qccmp durstp durstp_d hwplay i2 pffc usconrd po0 gl0 po1 namerd namerdx pdc ascha stst stst0 lread0 glord crwise cr0 cr1 cr1x cr1x
 
 #Note if you're looking for the occurence coutner in here, forget it, it has its own repo in "juegooca"
 
@@ -305,6 +305,9 @@ gl0: gl0.c
 # use getline funcs (based on gl0.c) to reorder lines from col to row wise
 glord: glord.c
 	${CC} ${CFLAGS} -o $@ $^
+	# following remodelling of thought process in cr1c.c, try it here
+glord2: glord2.c
+	${CC} ${CFLAGS} -o $@ $^
 stst0: stst0.c
 	${CC} ${CFLAGS} -o $@ $^
 stst: stst.c
@@ -321,6 +324,9 @@ ascha: ascha.c
 cr0: cr0.c
 	${CC} ${CFLAGS} -o $@ $^
 cr1: cr1.c
+	${CC} ${CFLAGS} -o $@ $^
+	# same as cr1 except it takes nrows first, and ncols second.
+cr1x: cr1x.c
 	${CC} ${CFLAGS} -o $@ $^
 crwise: crwise.c
 	${CC} ${CFLAGS} -o $@ $^
