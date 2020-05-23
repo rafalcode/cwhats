@@ -26,19 +26,14 @@ typedef struct
     int asz;
 } larr_t;
 
-int main(int argc, char *argv[])
+larr_t *slurplines(char *fn)
 {
     FILE *stream;
     // char *line = NULL;
     size_t len = 0;
     int i;
 
-    if (argc != 2) {
-        fprintf(stderr, "Usage: %s <file>\n", argv[0]);
-        exit(EXIT_FAILURE);
-    }
-
-    stream = fopen(argv[1], "r");
+    stream = fopen(fn, "r");
     if (stream == NULL) {
         perror("fopen");
         exit(EXIT_FAILURE);
@@ -54,28 +49,35 @@ int main(int argc, char *argv[])
         la->l[i]=NULL;
     }
 
-    // test to see if initialised.
-    for(i=0;i<la->lbf;++i) 
-        printf("%p ", la->l+i); 
-    printf("\n"); 
-
     while ((la->lz[la->asz] = getline(la->l+la->asz, &len, stream)) != -1) {
         // nread is number of returned characters
         CONDREALLOC(la->asz, la->lbf, GBUF, la->l, char*, la->lz, size_t);
         // printf("Retrieved line of length (returned val method): %zu\n", nread);
         // printf("Retrieved line of length (strlen method): %zu\n", strlen(line));
         // fwrite(line, nread, 1, stdout);
-        printf("%zu) ", la->lz[la->asz]);
-        printf("%s", la->l[la->asz]);
         la->asz++;
     }
-    printf("lbuf:%i asz:%i\n", la->lbf, la->asz);
 
     /* now to see if normalise works */
     for(i=la->asz;i<la->lbf;++i)
         free(la->l[i]);
     la->l=realloc(la->l, la->asz*sizeof(char*)); // normalize
     la->lz=realloc(la->lz, la->asz*sizeof(size_t)); // normalize
+
+    /* Ok that's it */
+    fclose(stream);
+    return la;
+}
+
+int main(int argc, char *argv[])
+{
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s <file>\n", argv[0]);
+        exit(EXIT_FAILURE);
+    }
+    int i;
+
+    larr_t *la=slurplines(argv[1]);
 
     /* and now to free */
     for(i=0;i<la->asz;++i)
@@ -84,7 +86,5 @@ int main(int argc, char *argv[])
     free(la->lz);
     free(la);
 
-    /* Ok that's it */
-    fclose(stream);
     exit(EXIT_SUCCESS);
 }
