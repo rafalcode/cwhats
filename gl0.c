@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define GBUF 4
+#define GBUF 2
 #define CONDREALLOC(x, b, c, a, t); \
     if((x)>=((b)-1)) { \
         (b) += (c); \
@@ -71,12 +71,12 @@ int main(int argc, char *argv[])
     /* now to see if normalise works */
     for(i=asz;i<lbuf;++i)
         free(aol[i]);
-    // aol=realloc(aol, asz*sizeof(char*)); // normalize
+    aol=realloc(aol, asz*sizeof(char*)); // normalize
 
     /* and now to free */
     for(i=0;i<asz;++i)
         free(aol[i]);
-    // free(aol);
+    free(aol);
 
     /* Ok that's it */
     fclose(stream);
