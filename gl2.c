@@ -55,6 +55,8 @@ larr_t *slurplines(char *fn)
         // printf("Retrieved line of length (returned val method): %zu\n", nread);
         // printf("Retrieved line of length (strlen method): %zu\n", strlen(line));
         // fwrite(line, nread, 1, stdout);
+        if(la->l[la->asz][la->lz[la->asz]-1]=='\n') // check the newline
+            la->l[la->asz][la->lz[la->asz]-1]='\0'; // smash the newline, of course you could save a byte and reallocate, etc. etc.
         la->asz++;
     }
 
