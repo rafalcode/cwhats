@@ -1,4 +1,5 @@
 /* a bit inconclusive */
+/* Yes well, memset is farily limited. It is after all entirely byte oriented.*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,7 +15,8 @@ int main(int argc, char *argv[])
 	float somef= 3.0;
 
     double *ma=malloc(N*sizeof(double));
-    memset(ma, (int)somef, N*sizeof(double));
+    memset(ma, (long int)somef, N*sizeof(double));
+    memset(ma, somef, N*sizeof(double));
 
 	printf("ma[N/10]=%4.6f\n", ma[N/10]);
 
