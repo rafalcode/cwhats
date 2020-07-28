@@ -53,3 +53,6 @@ However, that can be worked out OK
 
 ## qccmp.c
 A quick string comparator when strings are short (<17chars)
+
+## tok0.c
+strtok at work. Note the string before the first delimiter best taken separately
