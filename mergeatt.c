@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 //            printf("%i %i", 
 //        // printf("%i\n", r<<=i++); 
 //        printf("%i\n", r<<=i++); 
-    int tmp, j0, j2;
+    int tmp, j0, j2, m;
     for(j=0;j<vsz;j+=2) {
         j2=j+1;
         if(v[j]>v[j2]) {
@@ -64,13 +64,19 @@ int main(int argc, char *argv[])
         printf("%i ", v[i]);
     printf("\n"); 
     for(j=0;j<vsz;j+=8) {
-        for(k=0;k<4;k++) {
-            j0=j+k;
+        k=0;
+        m=0;
+        while((k<4) | (m<4)) {
+            j0=j+m;
             j2=j+k+4;
             printf("%i,%i \n", j0, j2); 
             if(v[j0]>v[j2]) {
                 tmp=v[j2]; v[j2]=v[j0], v[j0]=tmp; //swap!
+            } else {
+                m++;
+                continue;
             }
+            k++;
         }
     }
     printf("New ord:\n"); 
