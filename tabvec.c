@@ -1,4 +1,7 @@
 /* let's now take a known table of values and lead of a vector off of it */
+/* note this is limited in that we must know the total number of different integer values
+ *
+ * juegooca, the occurrences program is better if you don't know that */
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -50,15 +53,14 @@ int main(int argc, char *argv[])
 {
 	if(argc!=3) {
 		printf("tabvec: A simple integer table vector program.\n");
-		printf("usage:  Two args required: 1) how many different integers? 2) size of randomly generated vector of those different integers.\n");
+		printf("usage:  Two args required: 1) how many different integer values? 2) size of the randomly generated vector of those different integers, with repeats quite obviously.\n");
 		exit(EXIT_FAILURE);
 	}
-    printf("OK, first \n"); 
     int i, j;
     int maxisz /* max integer size */ = atoi(argv[1]);
     int vsz /* rand vect size */ = atoi(argv[2]);
     int *v=rendrv(maxisz, vsz);
-    printf("Here's the random vector:\n"); 
+    printf("OK, with those inputs, here's the random vector that will be the subject of our analysis:\n"); 
     for(i=0;i<vsz;++i) 
         printf("%i ", v[i]);
     printf("\n"); 
