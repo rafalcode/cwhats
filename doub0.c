@@ -21,7 +21,11 @@ int *catdoub(double *pv, int pvsz, int totcats)
 {
     int i, j;
     unsigned char catted; // was this categorized?
-    double thres[totcats]={2.2, 2.1,2.05,2.01,2.001, 2.0001,
+    // even with -std=c99 you can't do this:
+    // double thres[totcats]={2.2, 2.1,2.05,2.01,2.001, 2.0001,
+    //              1.9999, 1.999, 1.99, 1.95, 1.9, 1.8, 
+    //              1.2, 1.1,1.05,1.01,1.001, 1.0001};
+    double thres[]={2.2, 2.1,2.05,2.01,2.001, 2.0001,
                  1.9999, 1.999, 1.99, 1.95, 1.9, 1.8, 
                  1.2, 1.1,1.05,1.01,1.001, 1.0001};
     int *cats=calloc(totcats+1, sizeof(int));
@@ -67,17 +71,22 @@ int *arrcats2(int *cats, int catdim, int catquan) // arrange categories
     for(i=0;i<catdim;++i) {
         oddi=i%2;
         if(oddi) {
+            printf("Od: "); 
             for(j=i*CATQUAN;j<(i+1)*CATQUAN;++j) {
                 jj=j%CATQUAN;
-                cats2[jj]++;
+                printf("%i ", jj); 
+                cats2[jj]+= cats[j];
             }
+            printf("\n"); 
         } else {
+            printf("Ev: "); 
             for(j=(i+1)*CATQUAN-1;j>=i*CATQUAN;--j) {
                 jj=CATQUAN-1-(j%CATQUAN);
-                cats2[jj]++;
+                printf("%i ", jj); 
+                cats2[jj]+= cats[j];
             }
+            printf("\n"); 
         }
-        printf("\n"); 
     }
     return cats2;
 }
