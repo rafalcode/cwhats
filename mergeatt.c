@@ -1,4 +1,5 @@
 /* let's now take a known table of values and lead of a vector off of it */
+/* this is actaully an attempt at doing a merge sort */
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -9,6 +10,15 @@
         (b) += (c); \
         (a)=realloc((a), (b)*sizeof(t)); \
     }
+
+void prtv(int *v, int vsz)
+{
+    int i;
+    printf("New ord:\n"); 
+    for(i=0;i<vsz;++i) 
+        printf("%i ", v[i]);
+    printf("\n"); 
+}
 
 int *rendrv(int maxisz, int vsz)
 {
@@ -59,10 +69,7 @@ int main(int argc, char *argv[])
             }
         }
     }
-    printf("New ord:\n"); 
-    for(i=0;i<vsz;++i) 
-        printf("%i ", v[i]);
-    printf("\n"); 
+    prtv(v, vsz);
     for(j=0;j<vsz;j+=8) {
         k=0;
         m=0;
@@ -79,10 +86,7 @@ int main(int argc, char *argv[])
             k++;
         }
     }
-    printf("New ord:\n"); 
-    for(i=0;i<vsz;++i) 
-        printf("%i ", v[i]);
-    printf("\n"); 
+    prtv(v, vsz);
     free(v);
 
     return 0;
