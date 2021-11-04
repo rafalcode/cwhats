@@ -6,7 +6,7 @@ BZLIBS=-lbz2
 
 # looking for uov? chekc the juegoca repository
 
-EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco pwco2 pwco3 mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 tokargs given of stc dst2 rea0 recu0 recu1 recu2 recukmr rek0 reksyll0 ti0 fread0 ssl0 cha0 pread0 pread2 poi0 aownsa aownsai freaflo genfaa sscanflo bit4b uov0 uov2 avec discgam avec2 avecn binrd2 updo updo2 mesf ssca0 icp crp0 crp0_d crp2 crp2_d apa phox0 qccmp0 qccmp durstp durstp_d hwplay i2 pffc usconrd po0 gl0 po1 namerd namerdx pdc ascha stst stst0 lread0 glord crwise cr0 cr1 cr1x cr1x sorta0 ins0 ins glord2 numma gl2 lit vecal0 ov0 prm0 fy0 msort0 verifm ms0 scalltp0 mergeatt tabvec floa doub0 convs upstep0 vav0 noatoi duf0 coca0
+EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco pwco2 pwco3 mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 tokargs given of stc dst2 rea0 recu0 recu1 recu2 recukmr rek0 reksyll0 ti0 fread0 ssl0 cha0 pread0 pread2 poi0 aownsa aownsai freaflo genfaa sscanflo bit4b uov0 uov2 avec discgam avec2 avecn binrd2 updo updo2 mesf ssca0 icp crp0 crp0_d crp2 crp2_d apa phox0 qccmp0 qccmp durstp durstp_d hwplay i2 pffc usconrd po0 gl0 po1 namerd namerdx pdc ascha stst stst0 lread0 glord crwise cr0 cr1 cr1x cr1x sorta0 ins0 ins glord2 numma gl2 lit vecal0 ov0 prm0 fy0 msort0 verifm ms0 scalltp0 mergeatt tabvec floa doub0 convs upstep0 vav0 noatoi duf0 coca0 sq2
 
 #Note if you're looking for the occurence coutner in here, forget it, it has its own repo in "juegooca"
 
@@ -31,6 +31,8 @@ numma: numma.c
 	${CC} ${CFLAGS} -o $@ $^
 coca0: coca0.c
 	${CC} ${CFLAGS} -o $@ $^
+sq2: sq2.c
+	${CC} ${CFLAGS} -o $@ $^ -lm
 
 # sorting, but getting its associated sort array (permutation) out as well.
 # taken from old c_circus, and had to be corrected too.
