@@ -1,9 +1,10 @@
+/* checking if a certain number is a square without using math library. 
+ * Secret is exhaustive forlooping as usual */
+
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <math.h>
 
-#define LIM 10000000
+#define LIM 0x8FFFFFFF
 
 int main(int argc, char *argv[])
 {
@@ -12,13 +13,15 @@ int main(int argc, char *argv[])
 		printf("Error. Pls supply argument (integer).\n");
 		exit(EXIT_FAILURE);
 	}
-    int n=atoi(argv[1]);
+    int n=atol(argv[1]);
+    printf("%zu\n", sizeof(n)); 
 
-   int i, sq;
+   int i;
+   long long sq;
    unsigned char mkr=0;
 
    for(i=0;i<LIM;++i) {
-       sq = pow(i, 2);
+       sq = i*i;
        if(n>sq)
            continue;
        else if(n<sq) {
