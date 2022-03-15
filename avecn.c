@@ -1,5 +1,7 @@
 /* how to build up an integer vector of arbitrary size 
-Note how we use a container for the vector. Sure, it involves some extra functions */
+these programs are often copied pasted from, but this one is unusual,
+and actually leads to errors.
+Caveat Emptor! */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

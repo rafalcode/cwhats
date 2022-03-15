@@ -4,7 +4,7 @@
 #include <string.h>
 
 #define GBUF 5
-#define CONDREALLOC(x, b, c, a, t); \
+#define CONDREALLOCW(x, b, c, a, t); \
     if((x)>=((b)-1)) { \
         (b) += (c); \
         (a)=realloc((a), (b)*sizeof(t)); \

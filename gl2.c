@@ -5,6 +5,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <ctype.h>
 
 #define GBUF 4
 #define CONDREALLOC(x, b, c, a, t, a2, t2); \

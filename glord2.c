@@ -29,7 +29,6 @@ typedef struct  /* optstruct, a struct for the options */
 int catchopts(optstruct *opstru, int oargc, char **oargv)
 {
     int c;
-    opterr = 0;
 
     while ((c = getopt (oargc, oargv, "b:u:m:n:i:")) != -1)
         switch (c) {

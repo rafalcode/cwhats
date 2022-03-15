@@ -4,8 +4,8 @@ Note how we use a container for the vector. Sure, it involves some extra functio
 #include <stdlib.h>
 #include <string.h>
 
-#define GBUF 5
-#define CONDREALLOC(x, b, c, a, t); \
+#define XYBUF 5
+#define CONDREALLOCXY(x, b, c, x, y, t); \
     if((x)>=((b)-1)) { \
         (b) += (c); \
         (a)=realloc((a), (b)*sizeof(t)); \
@@ -28,7 +28,7 @@ av_c *crea_avc(int vbf)
 void condrea_avc(av_c *avc)
 {
     /* somewhat trivial, but idea is that, as avc is a container, it can be re-alloced inside a function */
-    CONDREALLOC(avc->vsz, avc->vbf, GBUF, avc->v, int);
+    CONDREALLOC(avc->vsz, avc->vbf, GBUF, avc->x, avc->y, int);
     return;
 }
 
