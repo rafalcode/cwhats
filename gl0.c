@@ -2,6 +2,7 @@
  * note that getline() does look quite convenient, because the line's memory need not
  * be explicitly allocated
  */
+#define  _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
