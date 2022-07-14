@@ -59,7 +59,6 @@ int main(int argc, char *argv[])
         printf("%p ", aol+i); 
     printf("\n"); 
     int asz=0;
-    int nr1; // for holding first nrread and so checking uniform size.
 
     while ((nread = getline(aol+asz, &len, stream)) != -1) {
         CONDREALLOC(asz, lbuf, GBUF, aol, char*);
@@ -67,12 +66,6 @@ int main(int argc, char *argv[])
         // printf("Retrieved line of length (strlen method): %zu\n", strlen(line));
         // fwrite(line, nread, 1, stdout);
         printf("%.*s\n", (int)(nread-1), aol[asz]); // here you can see how the newline is still in there.
-        if(asz==0)
-            nr1=nread;
-        else if(nr1 != nread) {
-            printf("Sorry, this particular program is only for lines with the exact same length\n");
-            exit(EXIT_FAILURE);
-        }
         asz++;
 
     }

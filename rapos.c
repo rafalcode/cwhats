@@ -70,6 +70,7 @@ int main(int argc, char *argv[])
     //     printf("(%i,%i) ", pos[i].x, pos[i].y);
     // printf("\n"); 
     printf("round=%i;ind=%i:(%i,%i)\n", i, ind-1, pos[ind-1].x, pos[ind-1].y);
+    printf("rmx=%u\n", RAND_MAX);
 
     free(pos);
     return 0;
