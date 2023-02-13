@@ -61,5 +61,11 @@ strtok at work. Note the string before the first delimiter best taken separately
 These programs use getline to read a textfile but then they do some ordering on the columns on the rows. Unsure.
 
 ## ra0.c
+This one very in the tradition of chwats ... tring to work out signed and unsigned shorts.
 I was having trouble with my wav files, in adding signed shorts, and this was an experiment to see the different things that can happen.
-Couldn't reproduce though.
+Couldn't reproduce though. Later, then I could yes.
+
+Casting unsigned shorts to integers directly isn't such a fab idea. It may be that the underlying bits don't change, but certainly the representation in printf()
+can drive you a bit mad as you see additions of shorts not working the way you expect at all.
+As this program showed, the trick is to cast unsigned to signed short first, and then to int.
+

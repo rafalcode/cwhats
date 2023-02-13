@@ -10,9 +10,11 @@ EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco pwco2 pwc
 
 #Note if you're looking for the occurence coutner in here, forget it, it has its own repo in "juegooca"
 
-# rand experiements.
+# ra0, a rand experiment which turned into a exercise is signed and unsigned shorts.
+# # see the README.md for more
 ra0: ra0.c
 	${CC} ${CFLAGS} -o $@ $^
+
 rapos: rapos.c
 	${CC} ${CFLAGS} -o $@ $^
 

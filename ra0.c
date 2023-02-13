@@ -47,25 +47,39 @@ int main(int argc, char *argv[])
     }
     putchar('\n');
     
-    short *sarr=malloc(2*NRA*sizeof(short));
-    short *sarr2=malloc(2*NRA*sizeof(short));
+    unsigned short *sarr=malloc(2*NRA*sizeof(unsigned short));
+    unsigned short *sarr2=malloc(2*NRA*sizeof(unsigned short));
     int *iarr2=malloc(NRA*sizeof(int));
+    printf("Shorts rendered as hex:\n"); 
     for(i=0;i<NRA;++i) {
-        sarr[2*i] = iarr[i]>>16;
+        sarr[2*i] = (iarr[i]>>16)&0x0000FFFF;
         sarr[2*i+1] = iarr[i]&0x0000FFFF;
-        printf("%i %i ", (int)sarr[2*i], (int)sarr[2*i+1]); 
+        printf("%4.4x %4.4x ", sarr[2*i], sarr[2*i+1]);
     }
     putchar('\n');
-    printf("As hex:\n"); 
-    for(i=0;i<NRA;++i)
-        printf("%4x %4x ", sarr[2*i], sarr[2*i+1]);
+    printf("Integerised version of the shorts:\n");
+    for(i=0;i<NRA;++i) {
+        // printf("%i %i ", (int)sarr[2*i], (int)sarr[2*i+1]); 
+        printf("%hi %hi ", sarr[2*i], sarr[2*i+1]); 
+    }
     putchar('\n');
+    printf("Let's add the shorts, see what happens, lesson learnt, cast unsigned to sign shorts first, then integerise:\n");
+    for(i=0;i<NRA;++i) {
+        printf("Add %i and %i: ", (short)sarr[2*i], (short)sarr[2*i+1]);
+        iarr2[i] = (short)sarr[2*i]+(short)sarr[2*i+1];
+        printf("%i\n", iarr2[i]);
+    }
+    printf("\n"); 
+    printf("Those additions in hex:\n"); 
+    for(i=0;i<NRA;++i)
+        printf("%4x ", iarr2[i]);
+    printf("\n");
     printf("Let's change endianness to small (HSB comes after LSBs)\n"); 
     for(i=0;i<NRA;++i) {
-        sarr2[2*i] = iarr[i]>>24;
-        sarr2[2*i] |= (iarr[i]&0x00FF0000)>>8;
-        sarr2[2*i+1] = (iarr[i]&0x0000FF00)>>8;
-        sarr2[2*i+1] |= (iarr[i]&0x000000FF)<<8;
+        sarr2[2*i] = (iarr[i]>>24)&0x000000FF;
+        sarr2[2*i] |= (iarr[i]>>8)&0x0000FF00;
+        sarr2[2*i+1] = (iarr[i]>>8)&0x000000FF;
+        sarr2[2*i+1] |= (iarr[i]<<8)&0x0000FF00;
         printf("%x %x ", sarr2[2*i], sarr2[2*i+1]); 
     }
     printf("\n");
@@ -73,16 +87,17 @@ int main(int argc, char *argv[])
     for(i=0;i<NRA;++i)
         printf("%i %i ", (int)sarr2[2*i], (int)sarr2[2*i+1]);
     putchar('\n');
-    printf("Let's add the shorts, see what happens:\n");
-    for(i=0;i<NRA;++i) {
-        iarr2[i] = sarr[2*i]+sarr[2*i+1];
-        printf("%i ", iarr2[i]);
-    }
-    printf("\n"); 
-    printf("Those additions in hex:\n"); 
-    for(i=0;i<NRA;++i)
-        printf("%4x ", iarr2[i]);
-    printf("\n");
+
+
+
+    printf("Final exercises with shorts:\n"); 
+
+    short s1=0x7FFF;
+    short s2=0x0002;
+    short s3=0xFFFE;
+    printf("%x, %x, %x\n", s1, s1+s2, s3); 
+    printf("%hi, %hi, %hi\n", s1, s1+s2, s3); 
+
 
     free(sarr2);
     free(sarr);
