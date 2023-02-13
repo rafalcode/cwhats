@@ -59,3 +59,7 @@ strtok at work. Note the string before the first delimiter best taken separately
 
 ## glord.c
 These programs use getline to read a textfile but then they do some ordering on the columns on the rows. Unsure.
+
+## ra0.c
+I was having trouble with my wav files, in adding signed shorts, and this was an experiment to see the different things that can happen.
+Couldn't reproduce though.
