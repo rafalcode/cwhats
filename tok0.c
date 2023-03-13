@@ -4,8 +4,6 @@
 
 int main(int argc, char *argv[])
 {
-
-
 	char s[]="ID=rna3;Parent=gene3;Dbxref=GeneID:106560213,Genbank:XM_014126719.1;Name=XM_014126719.1;gbkey=mRNA;           gene=LOC106560213;partial=true;product=phospholipase B1%2C membrane-associated-like;start_range=.,3827;transcript_id=XM_014126719.1";
 	printf("String to look at:\n%s\n", s);
 	char t[]=":,=;";
