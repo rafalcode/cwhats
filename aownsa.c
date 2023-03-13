@@ -2,12 +2,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <getopt.h>
 #include <string.h>
 #include <sys/time.h>
 #include <math.h>
 
 #define SETSEED 0 // note 300th element on arr2 is actually 1.000 in this run!
+#define LIMTYPESZ 10
 
 typedef struct  /* optstruct, a struct for the options */
 {
@@ -33,32 +33,34 @@ int catchopts(optstruct *opstru, int oargc, char **oargv)
     return 0;
 }
 
-int cmpll(const void *ll1_, const void *ll2_)
+int cmpflo(const void *flo1, const void *flo2)
 {
-    long *ll1 = (long*)ll1_;
-    long *ll2 = (long*)ll2_;
+    float *f1 = (float*)flo1;
+    float *f2 = (float*)flo2;
 
-    if(*ll1>*ll2)
+    if(*f1>*f2)
         return 1;
-    else if(*ll1<*ll2)
+    else if(*f1<*f2)
         return -1;
     else
         return 0;
 }
 
-long uplim(long *arr1, int idx, int sz, long dynmx) // upper limit
+float uplim01(float *arr1, int idx, int sz, char *limtype) // upper limit
 {
     /* upper limit of a certain index's ownership
      * this function only useful if called from a loop
      * which progress up from 0 to 1 real number line
     */
-    long ret;
+    float ret;
 
     if(idx==sz-1)
-        ret=dynmx;
-    else
-        ret=arr1[idx]+ceil((float)(arr1[idx+1]-arr1[idx])/2.);
-    /* note above how if 3 and and next element 7 fight over 5, it is assigned to 3. */
+        ret=1.;
+        // ret=arr1[sz-1];
+    else if( !strcmp("pt_as_mid", limtype) )
+        ret=arr1[idx]+(arr1[idx+1]-arr1[idx])/2.;
+    else if( !strcmp("pt_as_spl", limtype) )
+        ret=arr1[idx];
 
     return ret;
 }
@@ -66,15 +68,14 @@ long uplim(long *arr1, int idx, int sz, long dynmx) // upper limit
 int main(int argc, char *argv[])
 {
     /* argument accounting: remember argc, the number of arguments, _includes_ the executable */
-    if((argc<4) | (argc>6)) {
+    if((argc<3) | (argc>5)) {
         printf("Proper usage: Pls supply numb nodes in owning array, then numb nodes in belonging array\n");
-        printf("              Also dynamic maximum is required as third (free) argument.\n");
-        printf("              You can optionally follow these values with an -r flag to generate different pseudorandom values.\n");
-        printf("              An -n option is also available to only see number of children to each parent. It also gives a summary.\n");
+        printf("You can optionally follow these values with an -r flag to generate different pseudorandom values.\n");
+        printf("An -n option is also available to only see number of children to each parent. It also gives a summary.\n");
         exit(EXIT_FAILURE);
     }
     optstruct opstru={0};
-    int argignore=3;
+    int argignore=2; //
     int oargc=argc-argignore;
     char **oargv=argv+argignore;
 
@@ -91,39 +92,40 @@ int main(int argc, char *argv[])
         printf("RAND_MAX: %u\n", RAND_MAX); 
         printf("time-seed came out as: %u\n", tseed); 
 #endif
-        srand(tseed);
+        srandom(tseed);
     } else
-        srand(SETSEED);
+        srandom(SETSEED);
 
-    int i, j, n=atoi(argv[1]), m=atoi(argv[2]), dynmx=atol(argv[3]);
+    int i, j, n=atoi(argv[1]), m=atoi(argv[2]);
 
-    long *arr1=malloc(n*sizeof(long)), *arr2=malloc(m*sizeof(long));
+    float *arr1=malloc(n*sizeof(float)), *arr2=malloc(m*sizeof(float));
     int *oarr1=malloc(n*sizeof(int));
     memset(oarr1, -1, n*sizeof(int)); // if -1 then zero ownership for that index of arr1
 
-    for(i=0;i<n;++i) arr1[i]=(long)(dynmx*(float)rand()/RAND_MAX);
-    for(i=0;i<m;++i) arr2[i]=(long)(dynmx*(float)rand()/RAND_MAX);
+    for(i=0;i<n;++i) arr1[i]=(float)random()/RAND_MAX;
+    for(i=0;i<m;++i) arr2[i]=(float)random()/RAND_MAX;
 
-    /* sorr 'em! */
-    qsort(arr1, n, sizeof(long), cmpll);
-    qsort(arr2, m, sizeof(long), cmpll);
+    /* sorem! */
+    qsort(arr1, n, sizeof(float), cmpflo);
+    qsort(arr2, m, sizeof(float), cmpflo);
 
 #ifdef DBG
     printf("This is owning array in increasing order\n"); 
-    for(i=0;i<n;++i) printf("%li ", arr1[i]);
+    for(i=0;i<n;++i) printf("%4.4f ", arr1[i]);
     printf("\n"); 
     printf("This is belonging array in increasing order\n"); 
-    for(i=0;i<m;++i) printf("%li ", arr2[i]);
+    for(i=0;i<m;++i) printf("%4.4f ", arr2[i]);
 #endif
 
-    long ulim;
+    float ulim;
     int k=0, k2=0;
+    printf("Elements of first parent array, each with its list of elements in child arrayi which they \"2own\":\n\n");
     for(k=0;k<n;k++) {
-        ulim= uplim(arr1, k, n, dynmx);
+        ulim= uplim01(arr1, k, n);
         while(arr2[k2] <= ulim) {
             oarr1[k] = k2;
 #ifdef DBG
-            printf("is %li less than %li? ... ", arr2[k2], uplim(arr1, k, n, dynmx)); 
+            printf("is %4.4f less than %4.4f? ... ", arr2[k2], uplim01(arr1, k, n)); 
 #endif
             k2++;
             if(k2==m)break;
@@ -144,26 +146,14 @@ int main(int argc, char *argv[])
     int sum=0;
     int nparents=0;
 
-    // printf("Elements of first parent array, each with its list of elements in child array which they \"own\":\n\n");
-    printf("Parent array is as follows:\n");
-    for(i=0;i<n;++i) 
-        printf("%li ", arr1[i]);
-    printf("\nChild array is as follows:\n");
-    for(i=0;i<m;++i) 
-        printf("%li ", arr2[i]);
-    putchar('\n');
-    putchar('\n');
-    printf("Ownership calculation:\n"); 
-
     // first element
-    if(!opstru.nflag) {
-        if(oarr1[0] != -1)
-            printf("%li: ", arr1[0]);
+    if(oarr1[0] != -1)
+        printf("%4.4f: ", arr1[0]);
+    if(!opstru.nflag)
         for(j=0;j<=oarr1[0];++j)
-            printf((j!=oarr1[0])?"%li ":"%li\n", arr2[j]); 
-    } else {
+            printf((j!=oarr1[0])?"%4.4f ":"%4.4f\n", arr2[j]); 
+    else {
         // printf((oarr1[0]==-1)?"0":"%i\n", arr1[0]+1); // incredibly, it will be zero if -1
-        printf("%li: ", arr1[0]);
         printf("%i\n", oarr1[0]+1); 
         sum += oarr1[0]+1; 
         nparents++;
@@ -174,15 +164,15 @@ int main(int argc, char *argv[])
             lastgoodidx = oarr1[i-1]+1;
         if(!opstru.nflag) {
             if(oarr1[i] != -1)
-                printf("%li: ", arr1[i]); // to avoid verbosity do no print elements with no children.
+                printf("%4.4f: ", arr1[i]); // to avoid verbosity do no print elements with no children.
             if(oarr1[i] == -1)
                 continue;
 
             for(j=lastgoodidx;j<=oarr1[i];++j) 
-                printf((j!=oarr1[i])?"%li ":"%li\n", arr2[j]); 
+                printf((j!=oarr1[i])?"%4.4f ":"%4.4f\n", arr2[j]); 
 
         } else {
-            printf("%li: ", arr1[i]); // all parent elements will be printed with nflag.
+            printf("%4.4f: ", arr1[i]); // all parent elements will be printed with nflag.
             printf("%i\n", oarr1[i]+1-lastgoodidx);
             sum += oarr1[i]+1-lastgoodidx;
             nparents++;

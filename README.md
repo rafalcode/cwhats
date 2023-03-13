@@ -5,7 +5,11 @@ See what happens with simple c code.
 Clearly, c also stands for "see" and these are mainly snippets
 which show very simple but often, powerful effects
 
+# watch getopts
+There seems to have been changes in this, and `unistd.h` is no longer the header for this, but rather `getopt.h`.
+
 # Contents
+
 
 ## gorounda.c
 The name is a mnemonic for "Go around array" and it's used for comparing the
@@ -48,8 +52,9 @@ Returning to this, some explanation is needed. IrnN any case "parent" array is b
 
 But dynmax is really pretty incomprehensible. The name, for a start. It seems to render the so called nodes into
 integers, but then was possible is that two nodes can fall on the same integer in the parent array, which is not really part of the user-case.
+Yes, dynmx, very poor name, is jus the the max value of the integers that will be rendered.
 
-However, that can be worked out OK
+The "i" version of this program is not apparent. The program is really nearest child to parent. Either above or below. Clearly the parent array is some sort of partitioning array.
 
 ## qccmp.c
 A quick string comparator when strings are short (<17chars)
@@ -69,3 +74,6 @@ Casting unsigned shorts to integers directly isn't such a fab idea. It may be th
 can drive you a bit mad as you see additions of shorts not working the way you expect at all.
 As this program showed, the trick is to cast unsigned to signed short first, and then to int.
 
+# ssca0.c
+Got to thinking about my many untreated tcx and gpx and how an alternative attack is to use sscanf(). It's nto regex, but maybe it could be enough
+see this post: https://stackoverflow.com/questions/24483075/input-using-sscanf-with-regular-expression
