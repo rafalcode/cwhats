@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <ctype.h>
 
 #define GBUF 2
 #define CONDREALLOC(x, b, c, a, t); \
@@ -65,7 +67,8 @@ int main(int argc, char *argv[])
         // printf("Retrieved line of length (returned val method): %zu\n", nread);
         // printf("Retrieved line of length (strlen method): %zu\n", strlen(line));
         // fwrite(line, nread, 1, stdout);
-        printf("%s (%zu - %zu)", aol[asz], nread, len);
+        // printf("%s (%zu - %zu)", aol[asz], nread, len);
+        printf("%*s\n", (int)nread-2, aol[asz]);
         asz++;
     }
     printf("lbuf:%i asz:%i\n", lbuf, asz);

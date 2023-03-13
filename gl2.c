@@ -2,6 +2,8 @@
  * note that getline() does look quite convenient, because the line's memory need not
  * be explicitly allocated
  */
+// following line is necessary to avoid getline implicitly call without explicitly library include.
+#define  _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
