@@ -16,11 +16,14 @@ int main(int argc, char *argv[])
    // (famous) approximations to pi
    double f2[]= {22./7, 223./71, 339./108, 256./81, 25./8, 3.14, 3.1416, 3.141589625, 0x1.921fp+1}; // that last one is my own
    int asz = sizeof(f2)/sizeof(double);
+   int *numsz=calloc(asz, sizeof(int)); //size of sting version of number
 
    printf("True pi= %4.2f %4.4f %4.12f\n%4.36f, %a\n", M_PI, M_PI, M_PI, M_PI, M_PI); 
    printf("\n"); 
    for(i=0;i<asz;++i) 
-       printf("%4.6f - %a\n", f2[i], f2[i]); 
+       numsz[i]=strlen(sprintf("%a", f2[i]));
+   for(i=0;i<asz;++i) 
+       printf("%4.6f - %a- %i\n", f2[i], f2[i], numsz[i]);
    printf("\n"); 
 
    return 0;
