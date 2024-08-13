@@ -17,8 +17,13 @@ int main (int argc, char *argv[])
     //int    tm_min   minutes [0,59]
     //int    tm_hour  hour [0,23]
 
+    if(argc!=2)  {
+        printf("One arg required a six digit continuous timespec, as in HHmmss, i.e. 100905 without colons and dots with zero padding enabled when necessary\n"); 
+        exit(EXIT_FAILURE);
 
-    char *anytime="142233";
+
+
+    char *anytime=argv[1];
     int h,m,s;
     // sscanf(anytime, "%2d%2d%2d", &h, &m , &s);
     struct tm mytime;

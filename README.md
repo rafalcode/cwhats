@@ -77,3 +77,8 @@ As this program showed, the trick is to cast unsigned to signed short first, and
 # ssca0.c
 Got to thinking about my many untreated tcx and gpx and how an alternative attack is to use sscanf(). It's nto regex, but maybe it could be enough
 see this post: https://stackoverflow.com/questions/24483075/input-using-sscanf-with-regular-expression
+Remember %*s the asterisk is the don't-care qualifier.
+
+# pfcofs
+how to use printf("%.*s") sometimes quite useful
+
