@@ -84,7 +84,8 @@ int main (int argc, char *argv[])
     //int    tm_hour  hour [0,23]
 
     if(argc!=2)  {
-        printf("One arg required: filename six digit continuous timespecs per line\n");
+        printf("One arg required: A filename wht six digit continuous timespecs per line\n");
+        printf("I.e. each contains something like 103351, which 10:33:51, i.e. ten o'clock, 33 minsutes and 51 seconds\n");
         exit(EXIT_FAILURE);
     }
     larr_t *la=slurplines(argv[1]);
@@ -120,11 +121,12 @@ int main (int argc, char *argv[])
     for(i=1;i<la->asz;++i) {
         printf("%lli\n", secarray[i]); 
         if(secarray[i] < secarray[i-1])
-            printf("Not monitonically increasingi entry found at idx %i\n", i); 
+            printf("Not monitonically increasing entry found at idx %i\n", i); 
         else if(secarray[i] == secarray[i-1])
             printf("Repeat second entry found at idx %i\n", i); 
     }
-    printf("endtime-startime=%lli\n", secarray[la->asz-1] - secarray[0]); 
+    long long diffepsecs = secarray[la->asz-1] - secarray[0]; // differfence in epoch seconds
+    printf("endtime-startime=%lli, or %lli hours, %lli mins and %lli secs\n", diffepsecs, diffepsecs/3600, (diffepsecs%3600)/60, (diffepsecs%3600)%60); 
 
     for(i=0;i<la->asz;++i)
         free(la->l[i]);
