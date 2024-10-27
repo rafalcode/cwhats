@@ -40,8 +40,8 @@ int main(int argc, char *argv[])
                 case 0xFFFFFF85: case 0xFFFFFFE0:
                     // agrave
                     nn[i]=L'à'; ych=true; break;
-                case 0xFFFFFFE1:
-                    // ß thought it was agrave!
+                case 0xFFFFFFE1: case 0xFFFFFFDF:
+                    // ß thought it was agrave! unsigned 337
                     nn[i]=L'ß'; ych=true; break;
                 case 0xFFFFFF84: case 0xFFFFFFE4:
                     // aumlaut
