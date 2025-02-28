@@ -7,7 +7,7 @@ BZLIBS=-lbz2
 
 # looking for uov? chekc the juegoca repository
 
-EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco pwco2 pwco3 mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 toktime tokargs tokfn tokfn2 given of stc dst2 rea0 recu0 recu1 recu2 recukmr rek0 reksyll0 fread0 ssl0 cha0 pread0 pread2 poi0 aownsa aownsai freaflo genfaa sscanflo bit4b uov0 uov2 avec discgam avec2 avec3 avecn binrd2 updo updo2 mesf ssca0 icp crp0 crp0_d crp2 crp2_d apa phox0 qccmp0 qccmp durstp durstp_d hwplay i2 pffc usconrd po0 gl00 gl0 ffif namerd namerdx pdc ascha stst stst0 lread0 glord crwise cr0 cr1 cr1x cr1x sorta0 ins0 ins glord2 glord3 numma gl2 lit vecal0 ov0 prm0 fy0 rfy1 murmers rsamp msort0 verifm ms0 scalltp0 mergeatt tabvec floa doub0 convs upstep0 vav0 noatoi duf0 coca0 sq2 insben sam0 sa0 sp0 ti0 genr0 avst0 avst2 te0 fo avword glt0 eu0 rapos ra0 ra1 ffl0 cat piap ab0 qs0 strf0 strf1 strf2 asp0 fp0 chra ren ren0 ren1
+EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco pwco2 pwco3 mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 toktime tokargs tokfn tokfn2 given of stc dst2 rea0 recu0 recu1 recu2 recukmr rek0 reksyll0 fread0 ssl0 cha0 pread0 pread2 poi0 aownsa aownsai freaflo genfaa sscanflo bit4b uov0 uov2 avec discgam avec2 avec3 avecn binrd2 updo updo2 mesf ssca0 icp crp0 crp0_d crp2 crp2_d apa phox0 qccmp0 qccmp durstp durstp_d hwplay i2 pffc usconrd po0 gl00 gl0 ffif namerd namerdx pdc ascha stst stst0 lread0 glord crwise cr0 cr1 cr1x cr1x sorta0 ins0 ins glord2 glord3 numma gl2 lit vecal0 ov0 prm0 fy0 rfy1 murmers rsamp msort0 verifm ms0 scalltp0 mergeatt tabvec floa doub0 convs upstep0 vav0 noatoi duf0 coca0 sq2 insben sam0 sa0 sp0 ti0 genr0 avst0 avst2 te0 fo avword glt0 eu0 rapos ra0 ra1 ffl0 cat piap ab0 qs0 strf0 strf1 strf2 asp0 fp0 chra ren rens1 ren1 ren11 em0 monday0
 
 #Note if you're looking for the occurence coutner in here, forget it, it has its own repo in "juegooca"
 
@@ -513,14 +513,25 @@ chra: chra.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
 
 # rename a tricky file
-# ren0 allows  a viewing of a tricky filename in terms of the unsigned integer (0xFFFFFF??) typoe char.
+# rens1 allows  a viewing of a tricky filename in terms of the unsigned integer (0xFFFFFF??) typoe char.
 # its not entirely dependable mind you.
-ren0: ren0.c
+# behold rens1, thi sis "rename see 1", will not rename but just allow you see what the rename would be -note - for only 1 file name (therefore the 1).
+rens1: rens1.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
 ren: ren.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
 # the following is the safe version of ren ... i.e. it doesn't actually name, just shows what would be done.
 ren1: ren1.c
+	${CC} ${CFLAGS} -o $@ $^ -lm
+# ren1 started to become better than ren, so I decided to create ren11 -v. similar - but it should go through with executing the rename.
+ren11: ren11.c
+	${CC} ${CFLAGS} -o $@ $^ -lm
+
+# Exp Max from chag
+em0: em0.c
+	${CC} ${CFLAGS} -o $@ $^ -lm
+
+monday0: monday0.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
 
 .PHONY: clean

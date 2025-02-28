@@ -20,39 +20,38 @@ int main (int argc, char *argv[])
     if(argc!=2)  {
         printf("One arg required a six digit continuous timespec, as in HHmmss, i.e. 100905 without colons and dots with zero padding enabled when necessary\n"); 
         exit(EXIT_FAILURE);
+    }
 
-
-
-    char *anytime=argv[1];
-    int h,m,s;
+    // int h,m,s;
     // sscanf(anytime, "%2d%2d%2d", &h, &m , &s);
-    struct tm mytime;
-    sscanf(anytime, "%2d%2d%2d", &mytime.tm_hour, &mytime.tm_min, &mytime.tm_sec);
+    struct tm *mytime = calloc(1, sizeof(struct tm));
+    sscanf(argv[1], "%2d%2d%2d", &mytime->tm_hour, &mytime->tm_min, &mytime->tm_sec);
+    printf("hrs=%d, mins=%d, secs=%d\n", mytime->tm_hour, mytime->tm_min, mytime->tm_sec);
+    printf("epsecs=%d\n", 3600*mytime->tm_hour + 60*mytime->tm_min + mytime->tm_sec);
     // if there were tokens between the components such as 14:22:33 the 2 in %2d would not necessary
     // as in:
     // sscanf(anytime, "%d:%d:%d", &mytime.tm_hour, &mytime.tm_min, &mytime.tm_sec);
-
-    printf("%i\n", s); 
 
     // mytime.tm_sec=33;
     // mytime.tm_min=22;
     // mytime.tm_hour=14;
 
     // the following are fillers, 01/01/1970 is a standard date, makes everything paly blla
-    mytime.tm_mday=1;
-    mytime.tm_mon=0;
-    mytime.tm_year=70;
+    mytime->tm_mday=1;
+    mytime->tm_mon=0;
+    mytime->tm_year=70;
 
     // Create a buffer to hold the formatted time string
     char *mtime_str=calloc(THROWAWAYMEMSZ, sizeof(char));
     // if (strftime(mtime_str, THROWAWAYMEMSZ, "%H:%M:%S", &mytime) == 0) {
-    if (strftime(mtime_str, THROWAWAYMEMSZ, "%s", &mytime) == 0) {
+    if (strftime(mtime_str, THROWAWAYMEMSZ, "%s %Z", mytime) == 0) {
         fprintf(stderr, "strftime returned 0");
         exit(EXIT_FAILURE);
     }
 
     printf("%s\n", mtime_str);
     free(mtime_str);
+    free(mytime);
 
     return 0;
 }
