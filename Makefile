@@ -534,6 +534,10 @@ em0: em0.c
 monday0: monday0.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
 
+# difference of two dates
+d2dates: d2dates.c
+	${CC} ${CFLAGS} -o $@ $^ -lm
+
 .PHONY: clean
 
 clean:
