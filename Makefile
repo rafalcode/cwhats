@@ -7,7 +7,7 @@ BZLIBS=-lbz2
 
 # looking for uov? chekc the juegoca repository
 
-EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco pwco2 pwco3 mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa loopfun tok0 toktime tokargs tokfn tokfn2 given of stc dst2 rea0 recu0 recu1 recu2 recukmr rek0 reksyll0 fread0 ssl0 cha0 pread0 pread2 poi0 aownsa aownsai freaflo genfaa sscanflo bit4b uov0 uov2 avec discgam avec2 avec3 avecn binrd2 updo updo2 mesf ssca0 icp crp0 crp0_d crp2 crp2_d apa phox0 qccmp0 qccmp durstp durstp_d hwplay i2 pffc usconrd po0 gl00 gl0 ffif namerd namerdx pdc ascha stst stst0 lread0 glord crwise cr0 cr1 cr1x cr1x sorta0 ins0 ins glord2 glord3 numma gl2 lit vecal0 ov0 prm0 fy0 rfy1 murmers rsamp msort0 verifm ms0 scalltp0 mergeatt tabvec floa doub0 convs upstep0 vav0 noatoi duf0 coca0 sq2 insben sam0 sa0 sp0 ti0 genr0 avst0 avst2 te0 fo avword glt0 eu0 rapos ra0 ra1 ffl0 cat piap ab0 qs0 strf0 strf1 strf2 asp0 fp0 chra ren rens1 ren1 ren11 em0 monday0 d2ck seev00 seev0 strp0 een tdef0
+EXECUTABLES=grounda opts1 opts2 full64 pfcofs thouptf three2b mn0 pwco pwco2 pwco3 mirutma passing0 cis bz0 isqrt hxv2 minlog10 eqaa eqa2 loopfun tok0 toktime tokargs tokfn tokfn2 given of stc dst2 rea0 recu0 recu1 recu2 recukmr rek0 reksyll0 fread0 ssl0 cha0 pread0 pread2 poi0 aownsa aownsai freaflo genfaa sscanflo bit4b uov0 uov2 avec discgam avec2 avec3 avecn binrd2 updo updo2 mesf ssca0 icp crp0 crp0_d crp2 crp2_d apa phox0 qccmp0 qccmp durstp durstp_d hwplay i2 pffc usconrd po0 gl00 gl0 ffif namerd namerdx pdc ascha stst stst0 lread0 glord crwise cr0 cr1 cr1x cr1x sorta0 ins0 ins glord2 glord3 numma gl2 lit vecal0 ov0 prm0 fy0 rfy1 murmers rsamp msort0 verifm ms0 scalltp0 mergeatt tabvec floa doub0 convs upstep0 vav0 noatoi duf0 coca0 sq2 insben sam0 sa0 sp0 ti0 genr0 avst0 avst2 te0 fo avword glt0 eu0 rapos ra0 ra1 ffl0 cat piap ab0 qs0 strf0 strf1 strf2 asp0 fp0 chra ren rens1 ren1 ren11 em0 monday0 d2ck seev00 seev0 strp0 een tdef0 prec at2 enc0
 
 #Note if you're looking for the occurence coutner in here, forget it, it has its own repo in "juegooca"
 
@@ -199,6 +199,9 @@ bz0: bz0.c
 
 # Nuritas 800 aa test
 eqaa: eqaa.c
+	${CC} ${CFLAGS} -o $@ $^
+# recalc 2026
+eqa2: eqa2.c
 	${CC} ${CFLAGS} -o $@ $^
 
 # dec to hex values 
@@ -549,10 +552,18 @@ seev0: seev0.c
 seev00: seev00.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
 
+prec: prec.c
+	${CC} ${CFLAGS0} -o $@ $^ -lm
+
 een: een.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
 
 tdef0: tdef0.c
+	${CC} ${CFLAGS} -o $@ $^ -lm
+# can I geatan2 to work?
+at2: at2.c
+	${CC} ${CFLAGS} -o $@ $^ -lm
+enc0: enc0.c
 	${CC} ${CFLAGS} -o $@ $^ -lm
 
 .PHONY: clean

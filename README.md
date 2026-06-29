@@ -23,7 +23,7 @@ Mnemonic MIR Upper Triangular MAtrix
 matrix transformation: principally mirroring triangle matrices.
 
 ## aa.c
-This was the result of a game presented by Nuritas when looking for bioinformaticians.
+This was the result of a game presented by Nuritas when looking for bioinformaticians around Sept 2017.
 a peptide sequence with heterogeneous quantities of the different AA's (as is normal)
 must be converted to a sequence with equally represented AA's, and the smallest subsequence
 with those change must be calculated. Because it's a single subsequence. Luckily the length of the sequence
@@ -31,6 +31,20 @@ is an integer multiple of the number of the AA's used which happens to be the fu
 
 There was a number of function here that I have already coded elsewhere ... and I did try to looks for them
 but they didn't come up (especialy the codon code from Uppsala), and it was easier to code from zero.
+
+Alt. description
+* Each of the 20 letters representing the 20 amino acids must be present in equal abundance in a sequence of 800 letters.
+* It's tirvial to realise that that equal number must be 40 as 20x40=800.
+* You're given what could easily be a random sequence of 800 AAs and you must change certain AAs into others to achieve this "AA equalisation" (as you might put it).
+* But you need to find the shortest subsequence in which this can be done.
+* So it's not about minimising the number of changes, but rather finding the shortest distance between the positions of the first letter you change and the last letter you change.
+* Essentially, this is about finding the longest beginning and ending of the sequence that can remain untouched, as it can only be one subsequence
+* The answer is going to be an integer less than 800 and I'm fairly sur ethe webscript only needed you to input that number.
+* I remember arriving at a number something like 500 (no 415 I think) (after finding a longer one) and deciding it wasn't possible to go any further.
+* in 2026 the one novel aspect was that perhaps you could allow a certain oversubscribed AA to go below 40 and then increment it again in an effort to reduce the subsequence length, because it's not about the number of 
+changes you make, but rather having them all occur in the shortest space between first and last.
+* came up as a stack overflow question some https://stackoverflow.com/questions/55594899/finding-the-length-of-the-shortest-subsequence-that-needs-to-be-replaced-in-orde
+* I seem to have the originally date file here: /mnt/sdb1/50d52aeb-8376-46bb-848d-9cab59f0c33c/rafgh/cwhats
 
 ## recukmer.c
 Recursion is a key aspect of computing, but being attached to the imperative style of programming, I don't use it much.  But the generation of kmers it turned out to be an ideal approach as it allows arbitrary embedded of for loops inside each other.
